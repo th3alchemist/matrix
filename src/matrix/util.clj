@@ -48,11 +48,29 @@
   
   
 (defn scalar-mul [scalar M] (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
-    (with-meta(map * M (repeat (* i j) scalar)){
+    (with-meta (map * M (repeat (* i j) scalar)){
                :row_cnt (:row_cnt (meta M))
                :col_cnt (:col_cnt (meta M))
                :col_names (:col_names (meta M))
                :row_names (:row_names (meta M))})));;scalar multiplication
+
+(defn matrix-add [M N] (with-meta (map + M N){
+               :row_cnt (:row_cnt (meta M))
+               :col_cnt (:col_cnt (meta M))
+               :col_names (:col_names (meta M))
+               :row_names (:row_names (meta M))}))
+
+(defn matrix-sub [M N] (with-meta (map - M N){
+               :row_cnt (:row_cnt (meta M))
+               :col_cnt (:col_cnt (meta M))
+               :col_names (:col_names (meta M))
+               :row_names (:row_names (meta M))}))
+
+(defn matrix-mul [M N] (with-meta (map * M N){
+               :row_cnt (:row_cnt (meta M))
+               :col_cnt (:col_cnt (meta M))
+               :col_names (:col_names (meta M))
+               :row_names (:row_names (meta M))}))
 
 
 
