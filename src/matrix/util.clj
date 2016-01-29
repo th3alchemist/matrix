@@ -29,6 +29,10 @@
 (defn first-col [M] (take-nth (:col_cnt (meta M)) M))
 (defn last-row [M] (reverse (take (:col_cnt (meta M)) (reverse M))))
 (defn last-col [M] (reverse (take-nth (:col_cnt (meta M)) (reverse M))))
+
+(defn nth-row [n M] (take (:col_cnt (meta M)) (drop (* n (:col_cnt (meta M))) M)))
+(defn nth-col [n M] (take-nth (:col_cnt (meta M)) (drop n M)))
+
 (defn diagonal [M] (take-nth (+ 1 (:col_cnt (meta M))) M));left to right diagonal
 
 
@@ -66,11 +70,14 @@
                :col_names (:col_names (meta M))
                :row_names (:row_names (meta M))}))
 
-(defn matrix-mul [M N] (with-meta (map * M N){
+(defn matrix-mul [M N] (if true
+                         (do (with-meta (map * M N){
                :row_cnt (:row_cnt (meta M))
                :col_cnt (:col_cnt (meta M))
                :col_names (:col_names (meta M))
-               :row_names (:row_names (meta M))}))
+               :row_names (:row_names (meta M))}))))
+
+;;(apply + (map * '(9 8) '(7 6)))
 
 
 
@@ -82,8 +89,6 @@
 
 
 
-
-
-
+	
 
 
