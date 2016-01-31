@@ -35,12 +35,38 @@
                :col_names (:col_names (meta M))
                :row_names (:row_names (meta M))}))
 
-(defn matrix-mul [M N] (if true
-                         (do (with-meta (map * M N){
-               :row_cnt (:row_cnt (meta M))
-               :col_cnt (:col_cnt (meta M))
-               :col_names (:col_names (meta M))
-               :row_names (:row_names (meta M))}))))
-
+(defn multiply [M N]
+  (loop [pos 0 out (vec (repeat (* 
+                                 (:row_cnt (meta O))
+                                 (:col_cnt (meta O)))
+                                nil))]
+    (if (> pos 8)
+      out
+      (recur
+        (+ pos 1)
+        (assoc out
+               pos
+               (apply + (map *
+                             (nth-row (nth (seq (get-coor pos O)) 0) O)
+                             (nth-col (nth (seq (get-coor pos O)) 1) O)
+               )))
+        ))))
 
 ;;(apply + (map * (matrix.util/nth-row i M) (matrix.util/nth-col j N)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
