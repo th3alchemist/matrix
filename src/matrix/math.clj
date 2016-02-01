@@ -46,17 +46,3 @@
                (apply + (map *
                              (matrix.util/nth-row (nth (seq (matrix.util/get-coor pos out)) 0) M)
                              (matrix.util/nth-col (nth (seq (matrix.util/get-coor pos out)) 1) N))))))))
-
-;;(apply + (map * (matrix.util/nth-row i M) (matrix.util/nth-col j N)))
-
-
-
-
-
-
-
-
-
-
-
-
