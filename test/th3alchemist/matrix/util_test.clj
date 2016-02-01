@@ -1,6 +1,6 @@
-(ns matrix.util-test
+(ns th3alchemist.matrix.util-test
   (:require [clojure.test :refer :all]
-            [matrix.util :refer :all]))
+            [th3alchemist.matrix.util :refer :all]))
 
 
 (def M (with-meta [98 4 2 3 7 0]
