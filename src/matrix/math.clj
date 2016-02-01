@@ -35,16 +35,14 @@
                :col_names (:col_names (meta M))
                :row_names (:row_names (meta M))}))
 
-(defn multiply [M N]
-  (loop [pos 0 out (with-meta (vec (repeat (* (:row_cnt (meta M))
-                                              (:col_cnt (meta N)))
-                              nil))
-                    {:row_cnt 3 :col_cnt 3 :col_names [:a :b] :row_names [:a :b :c]})]
-    (if (> pos (* (:row_cnt (meta M)) (:col_cnt (meta N))))
+(defn matrix-mul [M N]
+  (loop [pos 0 out (with-meta []
+                    {:row_cnt (:row_cnt (meta M)) :col_cnt (:col_cnt (meta N)) :col_names (:col_names (meta M)) :row_names (:row_names (meta N))})]
+    (if (= pos (* (:row_cnt (meta M)) (:col_cnt (meta N))))
       out
       (recur
         (+ pos 1)
-        (assoc (with-meta out {:row_cnt 3 :col_cnt 3 :col_names [:a :b] :row_names [:a :b :c]})
+        (assoc (with-meta out {:row_cnt (:row_cnt (meta M)) :col_cnt (:col_cnt (meta N)) :col_names (:col_names (meta M)) :row_names (:row_names (meta N))})
                pos
                (apply + (map *
                              (matrix.util/nth-row (nth (seq (matrix.util/get-coor pos out)) 0) M)
