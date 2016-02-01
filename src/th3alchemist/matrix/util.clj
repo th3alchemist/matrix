@@ -34,4 +34,30 @@
 (defn nth-col [M n] (if (< -1 n (:col_cnt (meta M)))
                       (take-nth (:col_cnt (meta M)) (drop n M))))
 (defn diagonal [M] (take-nth (+ 1 (:col_cnt (meta M))) M));left to right diagonal
-(defn identity-matrix [n] (repeat n 0))
+
+(defn matrix-str [M]
+  (if (not (matrix? M)) nil)
+  (loop [pos 0 rtnStr ""]
+    (if (= pos (:row_cnt (meta M)))
+      rtnStr
+      (recur (inc pos) (str rtnStr (seq (nth-row pos M)) "\n")))))
+
+(defn identity-matrix [n]
+  (loop [row 0 I (with-meta (vec (repeat (* n n) 0))
+                           {:row_cnt n :col_cnt n})]
+    (if (= row n) 
+      I
+      (recur 
+        (inc row) 
+        (assoc (with-meta I {:row_cnt n
+                             :col_cnt n}) 
+          (+ row (* row n))
+          1)))))
+
+
+(defn equal? [M N]
+  (and (= M N)
+       (= (:row_cnt (meta M))
+          (:row_cnt (meta N)))
+       (= (:col_cnt (meta M))
+          (:col_cnt (meta N)))))

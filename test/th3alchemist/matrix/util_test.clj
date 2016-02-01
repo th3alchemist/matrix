@@ -13,7 +13,22 @@
                            {:row_cnt 1 :col_cnt 4 :col_names [:age] :row_names [:shayla :zamirh :codex :josier]}))
 (def Q (with-meta [8.406 1.553 0.622 0.447]
                            {:row_cnt 4 :col_cnt 1 :col_names [:nyc :phl :stl :atl] :row_names [:population]}))
+(def misMatch (with-meta [8.406 1.553 0.622 0.447]
+                           {:row_cnt 4 :col_cnt 4 :col_names [:nyc :phl :stl :atl] :row_names [:population]}))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+
+(deftest matrix?empty-test
+  (testing "matrix? thinks [] w/o meta data is a matrix"
+    (is (= false (th3alchemist.matrix.util/matrix? [])))))
+
+(deftest matrix?vector-test
+  (testing "matrix? thinks [1 2 3 4] w/o meta data is a matrix"
+    (is (= false (th3alchemist.matrix.util/matrix? [1 2 3 4])))))
+
+(deftest matrix?-test
+  (testing "matrix? does not think M is a matrix"
+    (is (= true (th3alchemist.matrix.util/matrix? M)))))
+
+(deftest matrix?mismatch-test
+  (testing "matrix? thinks a 4 element vector is a 4x4 matrix"
+    (is (= false (th3alchemist.matrix.util/matrix? misMatch)))))
