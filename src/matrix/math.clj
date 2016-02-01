@@ -1,22 +1,21 @@
 (ns matrix.math)
 (require 'matrix.util)
 
-(defn scalar-add [scalar M] (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
+(defn scalar-add [M scalar] (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
     (with-meta (map + M (repeat (* i j) scalar)){
                :row_cnt (:row_cnt (meta M))
                :col_cnt (:col_cnt (meta M))
                :col_names (:col_names (meta M))
                :row_names (:row_names (meta M))})));;scalar addition
 
-(defn scalar-sub [scalar M] (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
+(defn scalar-sub [M scalar] (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
     (with-meta (map - M (repeat (* i j) scalar)){
                :row_cnt (:row_cnt (meta M))
                :col_cnt (:col_cnt (meta M))
                :col_names (:col_names (meta M))
                :row_names (:row_names (meta M))})));;scalar subtraction
   
-  
-(defn scalar-mul [scalar M] (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
+(defn scalar-mul [M scalar] (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
     (with-meta (map * M (repeat (* i j) scalar)){
                :row_cnt (:row_cnt (meta M))
                :col_cnt (:col_cnt (meta M))
