@@ -1,6 +1,7 @@
 (ns th3alchemist.matrix.util-test
   (:require [clojure.test :refer :all]
             [th3alchemist.matrix.util :refer :all]))
+(alias 'util 'th3alchemist.matrix.util)
 
 
 (def M (with-meta [98 4 2 3 7 0]
@@ -19,16 +20,62 @@
 
 (deftest matrix?empty-test
   (testing "matrix? thinks [] w/o meta data is a matrix"
-    (is (= false (th3alchemist.matrix.util/matrix? [])))))
+    (is (= false (util/matrix? [])))))
 
 (deftest matrix?vector-test
   (testing "matrix? thinks [1 2 3 4] w/o meta data is a matrix"
-    (is (= false (th3alchemist.matrix.util/matrix? [1 2 3 4])))))
+    (is (= false (util/matrix? [1 2 3 4])))))
 
 (deftest matrix?-test
   (testing "matrix? does not think M is a matrix"
-    (is (= true (th3alchemist.matrix.util/matrix? M)))))
+    (is (= true (util/matrix? M)))))
 
 (deftest matrix?mismatch-test
   (testing "matrix? thinks a 4 element vector is a 4x4 matrix"
-    (is (= false (th3alchemist.matrix.util/matrix? misMatch)))))
+    (is (= false (util/matrix? misMatch)))))
+
+(deftest get-row-negative-test
+  (testing "get-row allows negative positions"
+    (is (= nil (util/get-row M -2)))))
+
+(deftest get-row-test
+  (testing "get-row thinks pos 1 is not in row 0 in a 3x2 matrix"
+    (is (= 0 (util/get-row M 1)))))
+
+(deftest get-row-max-test
+  (testing "get-row thinks pos 5 is not in row 3 in a 3x2 matrix"
+    (is (= 2 (util/get-row M 5)))))
+
+(deftest get-row-upperbounds-test
+  (testing "get-row thinks pos 6 is in a 3x2 matrix"
+    (is (= nil (util/get-row M 6)))))
+
+
+(deftest get-col-negative-test
+  (testing "get-col allows negative positions"
+    (is (= nil (util/get-col M -2)))))
+
+(deftest get-col-test
+  (testing "get-col thinks pos 1 is not in col 0 in a 3x2 matrix"
+    (is (= 1 (util/get-col M 1)))))
+
+(deftest get-col-max-test
+  (testing "get-col thinks pos 5 is not in col 2 in a 3x2 matrix"
+    (is (= 1 (util/get-col M 5)))))
+
+(deftest get-col-upperbounds-test
+  (testing "get-row thinks pos 6 is in a 3x2 matrix"
+    (is (= nil (util/get-col M 6)))))
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -78,9 +78,33 @@
         (inc pos)
         (assoc out pos (not (get M pos)))))))
 
+(defn matrix-and [M N]
+ (loop [pos 0 out (with-meta (vec (repeat (* (:row_cnt (meta M))
+                                          (:col_cnt (meta M))) nil))
+                              {:row_cnt (:row_cnt (meta M))
+                               :col_cnt (:col_cnt (meta M))
+                               :col_names (:col_names (meta M))
+                               :row_names (:row_names (meta M))})]
+    (if (= pos (count M))
+      out
+      (recur
+        (inc pos)
+        (assoc out pos (and (get M pos) (get N pos)))))))
 
-(defn matrix-and [M N] "hi")
-(defn matrix-or [M N] "hi")
-(defn matrix-not [M] "hi")
+(defn matrix-or [M N]
+  (loop [pos 0 out (with-meta (vec (repeat (* (:row_cnt (meta M))
+                                              (:col_cnt (meta M))) nil))
+                              {:row_cnt (:row_cnt (meta M))
+                               :col_cnt (:col_cnt (meta M))
+                               :col_names (:col_names (meta M))
+                               :row_names (:row_names (meta M))})]
+    (if (= pos (count M))
+      out
+      (recur
+        (inc pos)
+        (assoc out pos (or (get M pos) (get N pos)))))))
+
 (defn submatrix [i j M] "hi")
 ;;add keyword bindings
+
+(defn trace [M] (apply + (diagonal M)))
