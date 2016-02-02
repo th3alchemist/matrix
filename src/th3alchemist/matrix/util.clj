@@ -19,6 +19,9 @@
   ([n] (with-meta (vec (repeat (* n n) nil))
                       {:row_cnt n :col_cnt n})))
 
+
+
+
 (defn matrix? [M]
   (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
     (if (or (nil? i)
@@ -31,14 +34,24 @@
     (and (= (* i j) (count M))
          (= i j))))
 
-(defn first-row [M] (take (:col_cnt (meta M)) M))
-(defn first-col [M] (take-nth (:col_cnt (meta M)) M))
-(defn last-row [M] (reverse (take (:col_cnt (meta M)) (reverse M))))
-(defn last-col [M] (reverse (take-nth (:col_cnt (meta M)) (reverse M))))
-(defn nth-row [M n] (if (< -1 n (:row_cnt (meta M)))
-                      (take (:col_cnt (meta M)) (drop (* n (:col_cnt (meta M))) M))))
-(defn nth-col [M n] (if (< -1 n (:col_cnt (meta M)))
-                      (take-nth (:col_cnt (meta M)) (drop n M))))
+
+(defn first-row [M] (with-meta (take (:col_cnt (meta M)) M)
+                               {:row_cnt 1 :col_cnt (:col_cnt (meta M))}))
+
+(defn first-col [M] (with-meta (take-nth (:col_cnt (meta M)) M)
+                               {:row_cnt (:row_cnt (meta M)) :col_cnt 1}))
+
+(defn last-row [M] (with-meta (reverse (take (:col_cnt (meta M)) (reverse M)))
+                              {:row_cnt 1 :col_cnt (:col_cnt (meta M))}))
+
+(defn last-col [M] (with-meta (reverse (take-nth (:col_cnt (meta M)) (reverse M)))
+                              {:row_cnt (:row_cnt (meta M)) :col_cnt 1}))
+
+(defn nth-row [n M] (with-meta (take (:col_cnt (meta M)) (drop (* n (:col_cnt (meta M))) M))
+                               {:row_cnt 1 :col_cnt (:col_cnt (meta M))}))
+
+(defn nth-col [n M] (with-meta (take-nth (:col_cnt (meta M)) (drop n M))
+                               {:row_cnt (:row_cnt (meta M)) :col_cnt 1}))
 
 (defn all-rows [M]
   (loop [i 0 out []]
@@ -56,10 +69,24 @@
         (inc i)
         (conj out (nth-col i M))))))
 
-(defn diagonal [M] (take-nth (+ 1 (:col_cnt (meta M))) M));left to right diagonal
+(defn flip [matrix]
+  (loop [row 0 M matrix]
+    (if (> row (:row_cnt (meta M)))
+      M
+      (recur
+        (inc row)
+        (with-meta (vec (concat (take (* row (:col_cnt (meta M))) M);;everything before the nth row
+                                (reverse (nth-row row M)) ;;reverse the nth row
+                                (reverse (take  (- (count M) (* (inc row) (:col_cnt (meta M)))) (reverse M)))));;everything after the nth row
+                   {:row_cnt (:row_cnt (meta M))
+                    :col_cnt (:col_cnt (meta M))
+                    :col_names (:col_names (meta M))
+                    :row_names (:row_names (meta M))})))))
 
-(defn anti-diagonal [M]
-  (with-meta (take-nth (+ 1 (:col_cnt (meta M))) (flip M))
+(defn diagonal [M] (with-meta (take-nth (+ 1 (:col_cnt (meta M))) M)
+                              {:row_cnt 1 :col_cnt (:col_cnt (meta M))}));left to right diagonal
+
+(defn anti-diagonal [M] (with-meta (take-nth (+ 1 (:col_cnt (meta M))) (flip M))
                               {:row_cnt 1 :col_cnt (:col_cnt (meta M))}));right to left diagonal
 
 (defn matrix-str [M]
@@ -87,17 +114,3 @@
           (:row_cnt (meta N)))
        (= (:col_cnt (meta M))
           (:col_cnt (meta N)))))
-
-(defn flip [matrix]
-  (loop [row 0 M matrix]
-    (if (> row (:row_cnt (meta M)))
-      M
-      (recur
-        (inc row)
-        (with-meta (vec (concat (take (* row (:col_cnt (meta M))) M);;everything before the nth row
-                                (reverse (nth-row row M)) ;;reverse the nth row
-                                (reverse (take  (- (count M) (* (inc row) (:col_cnt (meta M)))) (reverse M)))));;everything after the nth row
-                   {:row_cnt (:row_cnt (meta M))
-                    :col_cnt (:col_cnt (meta M))
-                    :col_names (:col_names (meta M))
-                    :row_names (:row_names (meta M))})))))
