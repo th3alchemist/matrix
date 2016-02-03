@@ -10,9 +10,9 @@
                            {:row_cnt 2 :col_cnt 3 :col_names [:a :b] :row_names [:a :b :c]}))
 (def O (with-meta [1 8 7 16 32 9 42 20 17]
                            {:row_cnt 3 :col_cnt 3 :col_names [:X :Y :Z] :row_names [:x :y :z]}))
-(def P (with-meta [29 84 -20 37]
+(def singleRow (with-meta [29 84 -20 37]
                            {:row_cnt 1 :col_cnt 4 :col_names [:age] :row_names [:shayla :zamirh :codex :josier]}))
-(def Q (with-meta [8.406 1.553 0.622 0.447]
+(def singleCol (with-meta [8.406 1.553 0.622 0.447]
                            {:row_cnt 4 :col_cnt 1 :col_names [:nyc :phl :stl :atl] :row_names [:population]}))
 (def misMatch (with-meta [8.406 1.553 0.622 0.447]
                            {:row_cnt 4 :col_cnt 4 :col_names [:nyc :phl :stl :atl] :row_names [:population]}))
@@ -20,7 +20,7 @@
                            {:row_cnt 3 :col_cnt 3 :col_names [:X :Y :Z] :row_names [:x :y :z]}))
 (def evenSquareMatrix (with-meta [14 -8 7 16 32 -9 42 20 17 -32 18 90 0 87 2 54]
                            {:row_cnt 4 :col_cnt 4 :col_names [:X :Y :Z] :row_names [:x :y :z]}))
-(def emptyMatrix (with-meta [] {:row_cnt 0 :col_cnt 0 :col_names nil :row_names nil}))
+(def emptyMatrix (with-meta [] {:row_cnt 0 :col_cnt 0 :col_names [] :row_names []}))
 
 
 (deftest matrix?empty-test
@@ -39,9 +39,6 @@
   (testing "matrix? thinks a 4 element vector is a 4x4 matrix"
     (is (= false (util/matrix? misMatch)))))
 
-(deftest get-row-negative-test
-  (testing "get-row allows negative positions"
-    (is (= nil (util/get-row M -2)))))
 
 (deftest get-row-test
   (testing "get-row thinks pos 1 is not in row 0 in a 3x2 matrix"
@@ -51,15 +48,6 @@
   (testing "get-row thinks pos 5 is not in row 3 in a 3x2 matrix"
     (is (= 2 (util/get-row M 5)))))
 
-(deftest get-row-upperbounds-test
-  (testing "get-row thinks pos 6 is in a 3x2 matrix"
-    (is (= nil (util/get-row M 6)))))
-
-
-(deftest get-col-negative-test
-  (testing "get-col allows negative positions"
-    (is (= nil (util/get-col M -2)))))
-
 (deftest get-col-test
   (testing "get-col thinks pos 1 is not in col 0 in a 3x2 matrix"
     (is (= 1 (util/get-col M 1)))))
@@ -67,13 +55,6 @@
 (deftest get-col-max-test
   (testing "get-col thinks pos 5 is not in col 2 in a 3x2 matrix"
     (is (= 1 (util/get-col M 5)))))
-
-(deftest get-col-upperbounds-test
-  (testing "get-row thinks pos 6 is in a 3x2 matrix"
-    (is (= nil (util/get-col M 6)))))
-
-
-
 
 (deftest first-matrix?-test
   (testing "first-row doesn't return a matrix"
@@ -86,7 +67,6 @@
 (deftest first-row-odd-values-test
   (testing "first-row doesn't return the correct values on an odd column matrix"
     (is (= (util/first-row oddSquareMatrix) [1 8 7]))))
-
 
 (deftest last-row-matrix?-test
   (testing "last-row doesn't return a matrix"
