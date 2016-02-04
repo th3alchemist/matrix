@@ -4,10 +4,13 @@ A matrix library. Support basic matrix operations, add subtract multiply, transp
 
 ## Usage
 (require 'matrix.util)
+
 (require 'matrix.math)
 
 (def M matrix.util/matrix 3);create a nil 3x3 matrix
+
 (def N matrix.util/matrix [2 3]);creates a 2x3 matrix
+
 
 (print (matrix.util/matrix-str M))
 
