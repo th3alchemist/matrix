@@ -1,6 +1,6 @@
-(defproject matrix "0.1.0-SNAPSHOT"
+(defproject com.th3alchemist.clojure/matrix "0.1.0-SNAPSHOT"
   :description "matrix library"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/th3alchemist/matrix"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]])
