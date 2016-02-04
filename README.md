@@ -1,10 +1,14 @@
 # matrix
 
-A Clojure library designed to ... well, that part is up to you.
+A matrix library. Support basic matrix operations, add subtract multiply, transpose, etc. The purpose of this lib is to support a graph library and a game library.
 
 ## Usage
+(require 'matrix.util)
+(require 'matrix.math)
 
-FIXME
+(def M matrix.util/matrix 3);create a nil 3x3 matrix
+(def N matrix.util/matrix [2 3]);creates a 2x3 matrix
+
 
 ## License
 

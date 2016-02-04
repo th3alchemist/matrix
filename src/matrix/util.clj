@@ -190,4 +190,4 @@
   (loop [pos 0 rtnStr ""]
     (if (= pos (:row_cnt (meta M)))
       rtnStr
-      (recur (inc pos) (str rtnStr (seq (nth-row pos M)) "\n")))))
+      (recur (inc pos) (str rtnStr (seq (nth-row M pos)) "\n")))))
