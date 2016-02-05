@@ -153,7 +153,7 @@
               :col_names (reverse (:col_names(meta M)))}));right to left diagonal
 
 (defn transpose [M]
-  (loop [pos 0 out (with-meta (vec (repeat (* (:row_cnt (meta M)) (:col_cnt (meta M))) nil)) 
+  (loop [pos 0 out (with-meta (matrix (:row_cnt (meta M)) (:col_cnt (meta M))) 
                     {:row_cnt (:col_cnt (meta M))
                      :col_cnt (:row_cnt (meta M))
                      :col_names (:row_names (meta M))

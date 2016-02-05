@@ -35,10 +35,8 @@
                :col_names (:col_names (meta M))
                :row_names (:row_names (meta M))}))
 
-
-
-(defn matrix-mul [M N] ;; broken b/c get-coor rtns nil
-  (loop [pos 0 out (with-meta (vec (repeat (* (:row_cnt (meta M)) (:col_cnt (meta N))) nil))
+(defn matrix-mul [M N]
+  (loop [pos 0 out (with-meta (util/matrix (:row_cnt (meta N)) (:col_cnt (meta M)))
                     {:row_cnt (:row_cnt (meta M)) :col_cnt (:col_cnt (meta N)) :col_names (:col_names (meta M)) :row_names (:row_names (meta N))})]
     (if (= pos (* (:row_cnt (meta M)) (:col_cnt (meta N))))
       out
@@ -51,8 +49,8 @@
                              (util/nth-col N (nth (seq (util/get-coor out pos)) 1)))))))))
 
 (defn matrix-not [M]
-  (loop [pos 0 out (with-meta (vec (repeat (* (:row_cnt (meta M))
-                                              (:col_cnt (meta M))) nil))
+  (loop [pos 0 out (with-meta (util/matrix (:row_cnt (meta M))
+                                           (:col_cnt (meta M)))
                               {:row_cnt (:row_cnt (meta M))
                                :col_cnt (:col_cnt (meta M))
                                :col_names (:col_names (meta M))
@@ -64,8 +62,8 @@
         (assoc out pos (not (get M pos)))))))
 
 (defn matrix-and [M N]
- (loop [pos 0 out (with-meta (vec (repeat (* (:row_cnt (meta M))
-                                          (:col_cnt (meta M))) nil))
+ (loop [pos 0 out (with-meta (util/matrix (:row_cnt (meta M))
+                                          (:col_cnt (meta M)))
                               {:row_cnt (:row_cnt (meta M))
                                :col_cnt (:col_cnt (meta M))
                                :col_names (:col_names (meta M))
@@ -77,8 +75,8 @@
         (assoc out pos (and (get M pos) (get N pos)))))))
 
 (defn matrix-or [M N]
-  (loop [pos 0 out (with-meta (vec (repeat (* (:row_cnt (meta M))
-                                              (:col_cnt (meta M))) nil))
+  (loop [pos 0 out (with-meta (util/matrix (:row_cnt (meta M))
+                                           (:col_cnt (meta M)))
                               {:row_cnt (:row_cnt (meta M))
                                :col_cnt (:col_cnt (meta M))
                                :col_names (:col_names (meta M))
@@ -90,3 +88,5 @@
         (assoc out pos (or (get M pos) (get N pos)))))))
 
 (defn trace [M] (apply + (util/diagonal M)))
+
+(defn det [M] (if (util/square-matrix?) M))
