@@ -198,4 +198,4 @@
              {:row_cnt (:row_cnt (meta M))
               :col_cnt (dec (:col_cnt (meta M)))
               :row_names (:row_names (meta M))
-              :col_names (vec-remove (:col_names (meta M)) col)}))
+              :col_names (:col_names (meta M))}))

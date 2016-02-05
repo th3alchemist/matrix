@@ -89,4 +89,24 @@
 
 (defn trace [M] (apply + (util/diagonal M)))
 
-(defn det [M] (if (util/square-matrix?) M))
+(defn det [M] (if (and (util/square-matrix? M)
+                       (= 4 (count M)))
+                          (+ (* (nth M 0)
+                                (nth M 3))
+                             (* (nth M 1)
+                                (nth M 2)))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
