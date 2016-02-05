@@ -40,7 +40,8 @@
             (nil? row_names)
             (nil? col_names))
       false
-      (= (* i j) (count M)))))
+      (and (= (* i j) (count M))
+           (vector? M)))))
 
 (defn square-matrix? [M]
   (let [i (:row_cnt (meta M)) j (:col_cnt (meta M)) row_names (:row_names (meta M)) col_names (:col_names (meta M))]
@@ -191,3 +192,10 @@
     (if (= pos (:row_cnt (meta M)))
       rtnStr
       (recur (inc pos) (str rtnStr (seq (nth-row M pos)) "\n")))))
+
+(defn matrix-assoc [M k v]
+  (with-meta (assoc M k v)
+             {:row_cnt (:row_cnt (meta M))
+              :col_cnt (dec (:col_cnt (meta M)))
+              :row_names (:row_names (meta M))
+              :col_names (vec-remove (:col_names (meta M)) col)}))
