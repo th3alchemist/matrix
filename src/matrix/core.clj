@@ -5,6 +5,16 @@
   (vec (concat (subvec coll 0 pos) (subvec coll (inc pos)))))
 
 
+(defn matrix? [M]
+  (let [i (:row_cnt (meta M)) j (:col_cnt (meta M)) row_names (:row_names (meta M)) col_names (:col_names (meta M))]
+    (if (or (nil? i)
+            (nil? j)
+            (nil? row_names)
+            (nil? col_names))
+      false
+      (and (= (* i j) (count M))
+           (vector? M)))))
+
 (defn matrix-str [M]
   (if (not (matrix? M)) nil)
   (loop [pos 0 rtnStr ""]
@@ -65,16 +75,6 @@
                              :col_names (vec (range n))})
           (+ row (* row n))
           1)))))
-
-(defn matrix? [M]
-  (let [i (:row_cnt (meta M)) j (:col_cnt (meta M)) row_names (:row_names (meta M)) col_names (:col_names (meta M))]
-    (if (or (nil? i)
-            (nil? j)
-            (nil? row_names)
-            (nil? col_names))
-      false
-      (and (= (* i j) (count M))
-           (vector? M)))))
 
 (defn square-matrix? [M]
   (let [i (:row_cnt (meta M)) j (:col_cnt (meta M)) row_names (:row_names (meta M)) col_names (:col_names (meta M))]
