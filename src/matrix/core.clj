@@ -15,6 +15,8 @@
       (and (= (* i j) (count M))
            (vector? M)))))
 
+(declare nth-row)
+
 (defn matrix-str [M]
   (if (not (matrix? M)) nil)
   (loop [pos 0 rtnStr ""]
@@ -60,21 +62,14 @@
                        :col_names (vec (range n))})))
 
 (defn identity-matrix [n]
-  (loop [row 0 I (with-meta (vec (repeat (* n n) 0))
-                           {:row_cnt n
-                            :col_cnt n
-          	                :row_names (vec (range n))
-                            :col_names (vec (range n))})]
+  (loop [row 0 I (matrix n)]
     (if (= row n) 
       I
       (recur 
         (inc row) 
-        (assoc (with-meta I {:row_cnt n
-                             :col_cnt n
-                             :row_names (vec (range n))
-                             :col_names (vec (range n))})
-          (+ row (* row n))
-          1)))))
+        (matrix-assoc I
+                      (+ row (* row n))
+                      1)))))
 
 (defn square-matrix? [M]
   (let [i (:row_cnt (meta M)) j (:col_cnt (meta M)) row_names (:row_names (meta M)) col_names (:col_names (meta M))]
@@ -94,7 +89,7 @@
 
 (defn get-pos [M [i j]] (+ (* i (:col_cnt (meta M))) j))
 
-(defn get-coor [M pos] (vec (get-row M pos) (get-col M pos)))
+(defn get-coor [M pos] (vector (get-row M pos) (get-col M pos)))
 
 (defn first-row [M]
   (with-meta (take (:col_cnt (meta M)) M)
@@ -160,17 +155,17 @@
 
 (defn flip [matrix]
   (loop [row 0 M matrix]
-    (if (> row (:row_cnt (meta M)))
+    (if (= row (:row_cnt (meta M)))
       M
       (recur
         (inc row)
         (with-meta (vec (concat (take (* row (:col_cnt (meta M))) M);;everything before the nth row
-                                (reverse (nth-row row M)) ;;reverse the nth row
+                                (reverse (nth-row M row)) ;;reverse the nth row
                                 (reverse (take  (- (count M) (* (inc row) (:col_cnt (meta M)))) (reverse M)))));;everything after the nth row
                    {:row_cnt (:row_cnt (meta M))
                     :col_cnt (:col_cnt (meta M))
                     :row_names (:row_names (meta M))
-                    :col_names (reverse (:col_names (meta M)))})))))
+                    :col_names (:col_names (meta M))})))))
 
 (defn diagonal [M]
   (with-meta (take-nth (+ 1 (:col_cnt (meta M))) M)
@@ -196,20 +191,13 @@
       out
       (recur 
         (inc pos)
-        (assoc (with-meta out {:row_cnt (:col_cnt (meta M))
-                               :col_cnt (:row_cnt (meta M))
-                               :col_names (:row_names (meta M))
-                               :row_names (:col_names (meta M))}) 
-          (get-pos out [(get-col M pos) (get-row M pos)])
-          (get M pos))))))
+        (matrix-assoc out
+                      (get-pos out [(get-col M pos) (get-row M pos)])
+                      (get M pos))))))
 
 (defn drop-nth-row [M row]
-    (with-meta (vec (concat (subvec M 0 (* row (:col_cnt (meta M))))
-                            (subvec M (* (inc row) (:col_cnt (meta M))))))
-               {:row_cnt (dec (:row_cnt (meta M)))
-                :col_cnt (:col_cnt (meta M))
-                :row_names (vec-remove (:row_names (meta M)) row)
-                :col_names (:col_names (meta M))}))
+  (matrix-concat (subvec M 0 (* row (:col_cnt (meta M))))
+                 (subvec M (* (inc row) (:col_cnt (meta M))))))
 
 (defn drop-nth-col [M col]
   (transpose (drop-nth-row (transpose M) col)))

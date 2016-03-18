@@ -21,6 +21,8 @@
 
 (def listMatrix (with-meta '(98 4 2 3 7 0)
                            {:row_cnt 3 :col_cnt 2 :col_names [:A :B :C] :row_names [:A :B]}))
+(def booleanMatrix (with-meta [true true false false true false]
+                           {:row_cnt 3 :col_cnt 2 :col_names [:A :B :C] :row_names [:A :B]}))
 
 ;;test-order
 ;;1 - does it return a matrix
