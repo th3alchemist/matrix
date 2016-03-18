@@ -16,13 +16,17 @@
 (def oddSquareMatrix (with-meta [1 8 7 16 32 9 42 20 17]
                            {:row_cnt 3 :col_cnt 3 :col_names [:X :Y :Z] :row_names [:x :y :z]}))
 (def evenSquareMatrix (with-meta [14 -8 7 16 32 -9 42 20 17 -32 18 90 0 87 2 54]
-                           {:row_cnt 4 :col_cnt 4 :col_names [:X :Y :Z] :row_names [:x :y :z]}))
+                           {:row_cnt 4 :col_cnt 4 :col_names [:W :X :Y :Z] :row_names [:w :x :y :z]}))
 (def emptyMatrix (with-meta [] {:row_cnt 0 :col_cnt 0 :col_names [] :row_names []}))
 
 (def listMatrix (with-meta '(98 4 2 3 7 0)
                            {:row_cnt 3 :col_cnt 2 :col_names [:A :B :C] :row_names [:A :B]}))
 (def booleanMatrix (with-meta [true true false false true false]
                            {:row_cnt 3 :col_cnt 2 :col_names [:A :B :C] :row_names [:A :B]}))
+
+(def temp (with-meta [1 2 3 4]
+                     {:row_cnt 2 :col_cnt 2 :col_names [:Y :Z] :row_names [:y :z]}))
+
 
 ;;test-order
 ;;1 - does it return a matrix
