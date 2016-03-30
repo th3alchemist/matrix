@@ -90,6 +90,12 @@
 
 (defn get-coor [M pos] (vector (get-row M pos) (get-col M pos)))
 
+(defn row [M label]
+  (nth-row M (.indexOf (:row_names (meta M)) label)))
+
+(defn col [M label]
+  (nth-col M (.indexOf (:col_names (meta M)) label)))
+
 (defn first-row [M]
   (with-meta (take (:col_cnt (meta M)) M)
              {:row_cnt 1

@@ -76,14 +76,21 @@
 
 (defn trace [M] (apply + (mCore/diagonal M)))
 
-(defn det [M] (if (= 4 (count M))
-                (- (* (nth M 0)
-                      (nth M 3))
-                   (* (nth M 1)
-                      (nth M 2)))))
+(defn det [M]
+  (loop [col 0 matrix M]
+    (if (= col (:col_cnt (meta matrix)));;(= 4 (count M))
+      (- (* (nth matrix 0)
+            (nth matrix 3))
+         (* (nth matrix 1)
+            (nth matrix 2)))
+      (recur (inc col) (det (mCore/sub-matrix matrix (vector col col)))))))
 
-
-
+(def det2 [M]
+  (loop [matrix M col 0 acc 0]
+    (if (= 4 (count M))
+      acc
+      (recur (sub-matrix M (vector col col)) (inc col) (inc acc)))))
+  
 
 
 
