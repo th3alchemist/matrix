@@ -41,11 +41,12 @@
 (declare nth-row)
 
 (defn matrix-str [M]
-  (if (not (matrix? M)) nil)
   (loop [row 0 rtnStr ""]
     (if (= row (:row_cnt (meta M)))
       rtnStr
-      (recur (inc row) (str rtnStr (seq (nth-row M row)) "\n")))))
+      (recur (inc row) (str rtnStr
+                            (apply str (map #(format "%8s" %1) (nth-row M row)))
+                            "\n")))))
 
 (defn matrix-assoc [M k v]
   (with-meta (assoc M k v)
