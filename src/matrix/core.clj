@@ -40,12 +40,21 @@
 
 (declare nth-row)
 
-(defn matrix-str [M]
+(defn max-token-count [board]
+  (inc (apply max (map count (map str board)))))
+
+(defn fmt-str [board & [justify _]]
+  (str "%"
+       ({:left "-" :right ""} justify "-")
+       (max-token-count board)
+       "s"))
+
+(defn matrix-str [M  & [justify _]]
   (loop [row 0 rtnStr ""]
     (if (= row (:row_cnt (meta M)))
       rtnStr
       (recur (inc row) (str rtnStr
-                            (apply str (map #(format "%8s" %1) (nth-row M row)))
+                            (apply str (map #(format (fmt-str M justify) %1) (nth-row M row)))
                             "\n")))))
 
 (defn matrix-assoc [M k v]
