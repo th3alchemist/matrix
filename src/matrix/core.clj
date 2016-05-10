@@ -169,19 +169,12 @@
         (inc i)
         (conj out (nth-col M i))))))
 
-(defn flip [matrix]
-  (loop [row 0 M matrix]
-    (if (= row (:row_cnt (meta M)))
-      M
-      (recur
-        (inc row)
-        (with-meta (vec (concat (take (* row (:col_cnt (meta M))) M);;everything before the nth row
-                                (reverse (nth-row M row)) ;;reverse the nth row
-                                (take-last (- (count M) (* (inc row) (:col_cnt (meta M)))) M)));;everything after the nth row
-                   {:row_cnt (:row_cnt (meta M))
-                    :col_cnt (:col_cnt (meta M))
-                    :row_names (:row_names (meta M))
-                    :col_names (:col_names (meta M))})))))
+(defn flip [M]
+  (with-meta (vec (apply concat (map reverse (partition (:col_cnt (meta M)) M))))
+             {:row_cnt (:row_cnt (meta M))
+              :col_cnt (:col_cnt (meta M))
+              :row_names (:row_names (meta M))
+              :col_names (:col_names (meta M))}))
 
 (defn diagonal [M]
   (with-meta (take-nth (+ 1 (:col_cnt (meta M))) M)
