@@ -8,13 +8,13 @@
   ([i j & [defaultVal]] (with-meta (vec (repeat (* i j) defaultVal))
                       {:row_cnt i
                        :col_cnt j
-                       :row_names (vec (range i))
-                       :col_names (vec (range j))}))
+                       :row_names (vec (map #(keyword (str (char %1))) (range 97 (+ 97 i))))
+                       :col_names (vec (map #(keyword (str (char %1))) (range 97 (+ 97 j))))}))
   ([n] (with-meta (vec (repeat (* n n) nil))
                       {:row_cnt n
                        :col_cnt n
-                       :row_names (vec (range n))
-                       :col_names (vec (range n))})))
+                       :row_names (vec (map #(keyword (str (char %1))) (range 97 (+ 97 n))))
+                       :col_names (vec (map #(keyword (str (char %1))) (range 97 (+ 97 n))))})))
 
 (defn matrix? [M]
   (let [i (:row_cnt (meta M)) j (:col_cnt (meta M)) row_names (:row_names (meta M)) col_names (:col_names (meta M))]
