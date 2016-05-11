@@ -40,9 +40,11 @@
 
 (declare nth-row)
 
-(defn max-token-count [board]
-  ;the format function replaces nil with null, which needs five charaters to format
-  (inc (apply max (conj (map count (map str board)) 5))))
+(defn max-token-count [board] 
+  (let [rtnVal (inc (apply max (map count (map str board))))]
+    (if (some nil? board)
+      (max 5 rtnVal)  ;the format function replaces nil with null, which needs five charaters to format 
+      rtnVal)))
 
 (defn fmt-str [board & [justify _]]
   (str "%"
