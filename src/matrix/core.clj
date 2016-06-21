@@ -30,6 +30,9 @@
 (declare nth-col)
 
 (defn identity-matrix [n]
+  "Takes an integer n and returns a square
+  matrix with all zeros, except on the
+  main diagonal when the values are one."
   (loop [row 0 I (matrix n n 0)]
     (if (= row n)
       I
@@ -40,6 +43,11 @@
                       1)))))
 
 (defn matrix? [M]
+  "Accepts a collection M and returns true
+  if it is a matrix; ie. is a vector
+  with i(row count) j(column count)
+  and row/col name meta data, and the
+  length of the collection is equal to i times j"
   (let [i (:row_cnt (meta M))
         j (:col_cnt (meta M))
         row_names (:row_names (meta M))
@@ -53,6 +61,9 @@
            (vector? M)))))
 
 (defn square-matrix? [M]
+  "Accepts a collection M and returns true
+  if it is a matrix and if the number
+  of rows equals the number of columns."
   (let [i (:row_cnt (meta M)) j (:col_cnt (meta M))]
     (and (matrix? M)
          (= i j))))
@@ -65,6 +76,10 @@
           (:col_cnt (meta N)))))
 
 (defn matrix-assoc
+  "assoc function wrapper. Accepts
+  the same args as assoc, M(matrix-str)
+  k(key, index) and v(value) but returns
+  a matrix, ie vector with meta-data"
   ([M k v]
   (with-meta (assoc M k v)
              {:row_cnt (:row_cnt (meta M))
@@ -74,6 +89,7 @@
   ([M row col v] (matrix-assoc M (get-pos M [row col]) v)))
 
 (defn matrix-concat [M N]
+  "Accepts two matrcies M and N, and returns matrix N appended to the bottom of matrix M"
   (with-meta (vec (concat M N))
              {:row_cnt (+ (:row_cnt (meta M)) (:row_cnt (meta N)))
               :col_cnt (:col_cnt (meta M))
@@ -81,6 +97,9 @@
               :col_names (:col_names (meta M))}))
 
 (defn matrix-conj [M N]
+  "Accepts two matrcies M and N,
+  and returns matrix N appended
+  to the left of matrix M"
   (loop [out [] row 0]
     (if (= row (:row_cnt (meta M)))
       out
@@ -91,15 +110,33 @@
                          :col_names (vec (concat (:col_names (meta M)) (:col_names (meta N))))})
               (inc row)))))
 
-(defn get-row [M pos] (quot pos (:col_cnt (meta M))))
+(defn get-row [M i]
+  "Accepts a matrix M and index i
+  and returns the row number
+  containing the ith value"
+  (quot i (:col_cnt (meta M))))
 
-(defn get-col [M pos] (mod pos (:col_cnt (meta M))))
+(defn get-col [M i]
+  "Accepts a matrix M and index i
+  and returns the col number
+  containing the ith value"
+  (mod i (:col_cnt (meta M))))
 
-(defn get-pos [M [i j]] (+ (* i (:col_cnt (meta M))) j))
+(defn get-pos [M [row col]]
+  "Accepts a matrix M and a collection
+  containing a row index and colum
+  index. Returns the index of the coordinate."
+  (+ (* row (:col_cnt (meta M))) col))
 
-(defn get-coor [M pos] [(get-row M pos) (get-col M pos)])
+(defn get-coor [M i]
+  "Accepts a matrix M and index i.
+  Returns a vector with the corresponding
+  row and column."
+  [(get-row M i) (get-col M i)])
 
 (defn first-row [M]
+  "Accepts a matrix M and returns a
+  matrix of only the first row of M"
   (with-meta (take (:col_cnt (meta M)) M)
              {:row_cnt 1
               :col_cnt (:col_cnt (meta M))
@@ -107,6 +144,8 @@
               :col_names (:col_names (meta M))}))
 
 (defn first-col [M]
+  "Accepts a matrix M and returns a
+  matrix of only the first column of M"
   (with-meta (take-nth (:col_cnt (meta M)) M)
              {:row_cnt (:row_cnt (meta M))
               :col_cnt 1
@@ -114,6 +153,8 @@
               :col_names (get (:col_names (meta M)) 0)}))
 
 (defn last-row [M]
+  "Accepts a matrix M and returns a
+  matrix of only the last row of M"
   (with-meta (subvec M
                      (- (count M) (:col_cnt (meta M)))
                      (count M))
@@ -123,22 +164,28 @@
               :col_names (:col_names (meta M))}))
 
 (defn last-col [M]
+  "Accepts a matrix M and returns a
+  matrix of only the last column of M"
   (with-meta (reverse (take-nth (:col_cnt (meta M)) (reverse M)))
                               {:row_cnt (:row_cnt (meta M))
                                :col_cnt 1
                                :row_names (:row_names (meta M))
                                :col_names (get (:col_names (meta M)) (dec (count (:col_names (meta M)))))}))
 
-(defn nth-row [M n]
+(defn nth-row [M i]
+  "Accepts a matrix M and index i.
+  Returns a matrix of only the ith row of M"
   (with-meta (subvec M
-                     (* n (:col_cnt (meta M)))
-                     (* (inc n) (:col_cnt (meta M))))
+                     (* i (:col_cnt (meta M)))
+                     (* (inc i) (:col_cnt (meta M))))
              {:row_cnt 1
               :col_cnt (:col_cnt (meta M))
-              :row_names (get (:row_names (meta M)) n)
+              :row_names (get (:row_names (meta M)) i)
               :col_names (:col_names (meta M))}))
 
 (defn nth-col [M n]
+  "Accepts a matrix M and index i.
+  Returns a matrix of only the ith column of M"
   (with-meta (vec (take-nth (:col_cnt (meta M)) (drop n M)))
              {:row_cnt (:row_cnt (meta M))
               :col_cnt 1
@@ -146,14 +193,20 @@
               :col_names (get (:col_names (meta M)) n)}))
 
 (defn all-rows [M]
+  "Accepts a matrix M and returns a
+  vector of matrcies. Each matrix in
+  the vector is a row of the original matrix M"
   (loop [i 0 out []]
-    (if (>= i (:col_cnt (meta M)))
+    (if (>= i (:row_cnt (meta M)))
       out
       (recur
         (inc i)
         (conj out (nth-row M i))))))
 
 (defn all-cols [M]
+  "Accepts a matrix M and returns a
+  vector of matrcies. Each matrix in
+  the vector is a column of the original matrix M"
   (loop [i 0 out []]
     (if (>= i (:col_cnt (meta M)))
       out
@@ -162,26 +215,38 @@
         (conj out (nth-col M i))))))
 
 (defn row [M label]
-  ;;get a row by the row name
+  "Accepts a matrix M and row name label
+  returns the index of the row with the corresponding label."
   (nth-row M (.indexOf (:row_names (meta M)) label)))
 
 (defn col [M label]
-  ;;get a column by the column name
+  "Accepts a matrix M and column name label
+  returns the index of the column with the corresponding label."
   (nth-col M (.indexOf (:col_names (meta M)) label)))
 
 (defn max-ele-length [M]
+  "Accepts a matrix M and returns the max
+  string length of all values in the matrix."
   (let [rtnVal (inc (apply max (map count (map str M))))]
     (if (some nil? M)
       (max 5 rtnVal)  ;the format function replaces nil with null, which needs five charaters to format  
       rtnVal)))
  
 (defn fmt-str [M & [justify _]]
+  "Accepts a matrix M and optional
+  :left or :right justify keyword.
+  Returns the format string used
+  in the format function for printing"
   (str "%"
        ({:left "-" :right ""} justify "-")
        (max-ele-length M)
        "s"))
  
 (defn matrix-str [M  & [justify _]]
+  "Accepts a matrix M and optional
+  :left or :right justify keyword.
+  Returns a string representatin of 
+  the matrix"
   (loop [row 0 rtnStr ""]
     (if (= row (:row_cnt (meta M)))
       (clojure.string/trim rtnStr)
@@ -190,6 +255,8 @@
                              "\n")))))
 
 (defn reflect [M]
+  "Accepts a matrix M and returns M reflected across its y-axis.
+  (Think 'mirror reflection')"
   (with-meta (vec (apply concat (map reverse (partition (:col_cnt (meta M)) M))))
              {:row_cnt (:row_cnt (meta M))
               :col_cnt (:col_cnt (meta M))
@@ -197,55 +264,73 @@
               :col_names (:col_names (meta M))}))
 
 (defn flip [M]
+  "Accepts a matrix M and returns M flipped across its x-axis.
+  (Think 'flipped upside down')"
   (loop [i (dec (:row_cnt (meta M))) out []]
     (if (< i 0)
-      (with-meta (vec out) {:row_cnt (:col_cnt (meta M))
-                           :col_cnt (:row_cnt (meta M))
-                           :row_names (:row_names (meta M))
-                           :col_names (:col_names (meta M))})
+      (with-meta (vec out) {:row_cnt (:row_cnt (meta M))
+                            :col_cnt (:col_cnt (meta M))
+                            :row_names (:row_names (meta M))
+                            :col_names (:col_names (meta M))})
       (recur (dec i)
              (concat out (nth-row M i))))))
 
 (defn diagonal [M]
+  "Accepts a matrix M and returns a matrix of values
+  along the diagonal going from the top-left corner
+  to bottom-right corner of M"
   (with-meta (vec (take-nth (+ 1 (:col_cnt (meta M))) M))
              {:row_cnt 1
               :col_cnt (:col_cnt (meta M))
               :row_names []
-              :col_names (:col_names(meta M))}));left to right diagonal
+              :col_names (:col_names(meta M))}))
 
 (defn anti-diagonal [M]
-  (diagonal (reflect M)));right to left diagonal
+  "Accepts a matrix M and returns a matrix of values
+  along the diagonal going from the top-right corner
+  to bottom-left corner of M"
+  (diagonal (reflect M)))
 
 (defn transpose [M]
-  (loop [pos 0 out (matrix (:col_cnt (meta M)) (:row_cnt (meta M)))]
-    (if (= pos (* (:row_cnt (meta M)) (:col_cnt (meta M))))
+  "Accepts a matrix M and returns the transpose of M"
+  (loop [i 0 out (matrix (:col_cnt (meta M)) (:row_cnt (meta M)))]
+    (if (= i (* (:row_cnt (meta M)) (:col_cnt (meta M))))
       (with-meta out {:row_cnt (:col_cnt (meta M))
                       :col_cnt (:row_cnt (meta M))
                       :row_names (:row_names (meta M))
                       :col_names (:col_names (meta M))})
       (recur 
-        (inc pos)
+        (inc i)
         (matrix-assoc out
-                      (get-pos out [(get-col M pos) (get-row M pos)])
-                      (get M pos))))))
+                      (get-pos out [(get-col M i) (get-row M i)])
+                      (get M i))))))
 
-(defn drop-nth-row [M row]
-  (with-meta (vec (concat (subvec M 0 (* row (:col_cnt (meta M))))
-                 (subvec M (* (inc row) (:col_cnt (meta M))))))
+(defn drop-nth-row [M i]
+  "Accepts a matrix M and row index i.
+  Returns a the original matrix with the ith row removed"
+  (with-meta (vec (concat (subvec M 0 (* i (:col_cnt (meta M))))
+                 (subvec M (* (inc i) (:col_cnt (meta M))))))
              {:row_cnt (dec (:row_cnt (meta M)))
               :col_cnt (:col_cnt (meta M))
               :row_names (vec-remove (:row_names (meta M)) 0)
               :col_names (:col_names (meta M))}))
 
-(defn drop-nth-col [M col]
-  (transpose (drop-nth-row (transpose M) col)))
+(defn drop-nth-col [M i]
+  "Accepts a matrix M and column index i.
+  Returns a the original matrix with the ith column removed"
+  (transpose (drop-nth-row (transpose M) i)))
 
-(defn sub-matrix [M [i j]] (drop-nth-row (drop-nth-col M j) i))
+(defn sub-matrix [M [i j]]
+  "Accepts a matrix M and vector containing a row and column index.
+  Returns a the original matrix with the ith row and jth column removed"
+  (drop-nth-row (drop-nth-col M j) i))
 
 (defn row-count [M]
+  "Accepts a matrix M and returns the number of rows it has"
   (:row_cnt (meta M)))
 
 (defn col-count [M]
+  "Accepts a matrix M and returns the number of columns it has"
   (:col_cnt (meta M)))
 
 (defn row-names [M]
