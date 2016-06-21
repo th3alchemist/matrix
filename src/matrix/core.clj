@@ -110,17 +110,17 @@
                          :col_names (vec (concat (:col_names (meta M)) (:col_names (meta N))))})
               (inc row)))))
 
-(defn get-row [M i]
-  "Accepts a matrix M and index i
+(defn get-row [M pos]
+  "Accepts a matrix M and index pos
   and returns the row number
-  containing the ith value"
-  (quot i (:col_cnt (meta M))))
+  containing the value in position pos"
+  (quot pos (:col_cnt (meta M))))
 
-(defn get-col [M j]
-  "Accepts a matrix M and index j
+(defn get-col [M pos]
+  "Accepts a matrix M and index pos
   and returns the col number
-  containing the ith value"
-  (mod j (:col_cnt (meta M))))
+  containing the value in position pos"
+  (mod pos (:col_cnt (meta M))))
 
 (defn get-pos [M [i j]]
   "Accepts a matrix M and a collection
