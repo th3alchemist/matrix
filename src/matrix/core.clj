@@ -116,17 +116,17 @@
   containing the ith value"
   (quot i (:col_cnt (meta M))))
 
-(defn get-col [M i]
-  "Accepts a matrix M and index i
+(defn get-col [M j]
+  "Accepts a matrix M and index j
   and returns the col number
   containing the ith value"
-  (mod i (:col_cnt (meta M))))
+  (mod j (:col_cnt (meta M))))
 
-(defn get-pos [M [row col]]
+(defn get-pos [M [i j]]
   "Accepts a matrix M and a collection
-  containing a row index and colum
+  containing a row index and column
   index. Returns the index of the coordinate."
-  (+ (* row (:col_cnt (meta M))) col))
+  (+ (* i (:col_cnt (meta M))) j))
 
 (defn get-coor [M i]
   "Accepts a matrix M and index i.
@@ -183,14 +183,14 @@
               :row_names (get (:row_names (meta M)) i)
               :col_names (:col_names (meta M))}))
 
-(defn nth-col [M n]
-  "Accepts a matrix M and index i.
+(defn nth-col [M j]
+  "Accepts a matrix M and index j.
   Returns a matrix of only the ith column of M"
-  (with-meta (vec (take-nth (:col_cnt (meta M)) (drop n M)))
+  (with-meta (vec (take-nth (:col_cnt (meta M)) (drop j M)))
              {:row_cnt (:row_cnt (meta M))
               :col_cnt 1
               :row_names (:row_names (meta M))
-              :col_names (get (:col_names (meta M)) n)}))
+              :col_names (get (:col_names (meta M)) j)}))
 
 (defn all-rows [M]
   "Accepts a matrix M and returns a
@@ -315,10 +315,10 @@
               :row_names (vec-remove (:row_names (meta M)) 0)
               :col_names (:col_names (meta M))}))
 
-(defn drop-nth-col [M i]
-  "Accepts a matrix M and column index i.
-  Returns a the original matrix with the ith column removed"
-  (transpose (drop-nth-row (transpose M) i)))
+(defn drop-nth-col [M j]
+  "Accepts a matrix M and column index j.
+  Returns a the original matrix with the jth column removed"
+  (transpose (drop-nth-row (transpose M) j)))
 
 (defn sub-matrix [M [i j]]
   "Accepts a matrix M and vector containing a row and column index.
