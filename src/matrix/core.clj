@@ -242,7 +242,7 @@
        (max-ele-length M)
        "s"))
  
-(defn matrix-str [M  & [justify _]]
+(defn matrix-str [M & [justify _]]
   "Accepts a matrix M and optional
   :left or :right justify keyword.
   Returns a string representatin of 
