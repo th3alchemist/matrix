@@ -1,25 +1,27 @@
 (ns matrix.core)
 
 (defn vec-remove
+  [coll pos]
   "takes a sequence coll and index pos.
   Returns the sequence with the element at position pos removed"
-  [coll pos]
   (vec (concat (subvec coll 0 pos) (subvec coll (inc pos)))))
 
 (defn matrix
-  "creates an empty matrix. When called with one parameter, it creats an nXn matrix.
-  When called with two parameters, it creates an iXj matrix.
-  When called with three paraters, it creates an iXj matrix initalized to defaultVal."
-  ([i j & [defaultVal]] (with-meta (vec (repeat (* i j) defaultVal))
-                      {:row_cnt i
-                       :col_cnt j
-                       :row_names (vec (map #(keyword (str (char %))) (range 65 (+ 65 i))))
-                       :col_names (vec (map #(keyword (str (char %))) (range 97 (+ 97 j))))}))
-  ([n] (with-meta (vec (repeat (* n n) nil))
-                      {:row_cnt n
-                       :col_cnt n
-                       :row_names (vec (map #(keyword (str (char %))) (range 65 (+ 65 n))))
-                       :col_names (vec (map #(keyword (str (char %))) (range 97 (+ 97 n))))})))
+  ([i j & [defaultVal]]
+    "creates an empty matrix. When called with two parameters, it creates an iXj matrix.
+    When called with three paraters, it creates an iXj matrix initalized to defaultVal."
+    (with-meta (vec (repeat (* i j) defaultVal))
+                        {:row_cnt i
+                         :col_cnt j
+                         :row_names (vec (map #(keyword (str (char %))) (range 65 (+ 65 i))))
+                         :col_names (vec (map #(keyword (str (char %))) (range 97 (+ 97 j))))}))
+  ([n]
+    "creates an empty matrix. When called with one parameter, it creats an nXn matrix."
+    (with-meta (vec (repeat (* n n) nil))
+                       {:row_cnt n
+                        :col_cnt n
+                        :row_names (vec (map #(keyword (str (char %))) (range 65 (+ 65 n))))
+                        :col_names (vec (map #(keyword (str (char %))) (range 97 (+ 97 n))))})))
 
 (declare matrix-assoc)
 
@@ -76,17 +78,22 @@
           (:col_cnt (meta N)))))
 
 (defn matrix-assoc
-  "assoc function wrapper. Accepts
-  the same args as assoc, M(matrix-str)
-  k(key, index) and v(value) but returns
-  a matrix, ie vector with meta-data"
   ([M k v]
-  (with-meta (assoc M k v)
+    "assoc function wrapper. Accepts
+    the same args as assoc, M(matrix)
+    k(key, index) and v(value) but returns
+    a matrix, ie vector with meta-data"
+    (with-meta (assoc M k v)
              {:row_cnt (:row_cnt (meta M))
               :col_cnt (:col_cnt (meta M))
               :row_names (:row_names (meta M))
               :col_names (:col_names (meta M))}))
-  ([M row col v] (matrix-assoc M (get-pos M [row col]) v)))
+  ([M i j v]
+    "assoc function wrapper. Accepts
+    the same args as assoc, M(matrix)
+    k(coor pair) and v(value) but returns
+    a matrix, ie vector with meta-data"
+    (matrix-assoc M (get-pos M [i j]) v)))
 
 (defn matrix-concat [M N]
   "Accepts two matrcies M and N, and returns matrix N appended to the bottom of matrix M"
@@ -309,10 +316,10 @@
   "Accepts a matrix M and row index i.
   Returns a the original matrix with the ith row removed"
   (with-meta (vec (concat (subvec M 0 (* i (:col_cnt (meta M))))
-                 (subvec M (* (inc i) (:col_cnt (meta M))))))
+                          (subvec M (* (inc i) (:col_cnt (meta M))))))
              {:row_cnt (dec (:row_cnt (meta M)))
               :col_cnt (:col_cnt (meta M))
-              :row_names (vec-remove (:row_names (meta M)) 0)
+              :row_names (vec-remove (:row_names (meta M)) i)
               :col_names (:col_names (meta M))}))
 
 (defn drop-nth-col [M j]

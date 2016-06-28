@@ -28,7 +28,6 @@
   [row]
   (vec (reverse (get-children row))))
 
-
 (defn get-distance [G src dest]
   (mCore/get-cell G [(mCore/row-index G src)
                       (mCore/col-index G dest)]))
