@@ -384,9 +384,17 @@
                               :col_cnt (count col-names)})
                   0)))
 
-(defn numerizer [M]
+(defn numerize [M]
   "Accepts a matrix of strings and returns a matrix of numbers"
   (with-meta (vec (map read-string M))
+             {:row_cnt (:row_cnt (meta M))
+              :col_cnt (:col_cnt (meta M))
+              :row_names (:row_names (meta M))
+              :col_names (:col_names (meta M))}))
+
+(defn keywordify [M]
+  "Accepts a matrix of strings and returns a matrix of keywords"
+  (with-meta (vec (map keyword M))
              {:row_cnt (:row_cnt (meta M))
               :col_cnt (:col_cnt (meta M))
               :row_names (:row_names (meta M))
