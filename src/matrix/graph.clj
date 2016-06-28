@@ -28,10 +28,16 @@
   [row]
   (vec (reverse (get-children row))))
 
+
+(defn get-distance [G src dest]
+  (mCore/get-cell G [(mCore/row-index G src)
+                      (mCore/col-index G dest)]))
+
 (defn dfs 
   "returns a vector of vertices from the src to dest in breath-first serach order"
   [G src & [dest]]
   (loop [open [src] processed []] ;;use as stack
+    (println "open is " open)
     (if (= (peek open) dest)
       (conj processed dest)
       (recur

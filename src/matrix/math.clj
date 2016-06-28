@@ -73,3 +73,8 @@
 (defn trace [M]
   "calculates the trace of matrix M"
   (apply + (mCore/diagonal M)))
+
+(defn det [M]
+  (if (= 4 (count M))
+    (- (* (nth M 0) (nth M 3))
+       (* (nth M 1) (nth M 2)))))

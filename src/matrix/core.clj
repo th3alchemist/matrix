@@ -128,11 +128,11 @@
   index. Returns the index of the coordinate."
   (+ (* i (:col_cnt (meta M))) j))
 
-(defn get-coor [M i]
-  "Accepts a matrix M and index i.
+(defn get-coor [M pos]
+  "Accepts a matrix M and position pos.
   Returns a vector with the corresponding
   row and column."
-  [(get-row M i) (get-col M i)])
+  [(get-row M pos) (get-col M pos)])
 
 (defn first-row [M]
   "Accepts a matrix M and returns a
@@ -297,8 +297,8 @@
     (if (= i (* (:row_cnt (meta M)) (:col_cnt (meta M))))
       (with-meta out {:row_cnt (:col_cnt (meta M))
                       :col_cnt (:row_cnt (meta M))
-                      :row_names (:row_names (meta M))
-                      :col_names (:col_names (meta M))})
+                      :row_names (:col_names (meta M))
+                      :col_names (:row_names (meta M))})
       (recur 
         (inc i)
         (matrix-assoc out
@@ -338,3 +338,27 @@
 
 (defn col-names [M]
   (:col_names (meta M)))
+
+(defn row-index [M label]
+  (.indexOf (row-names M) label))
+
+(defn col-index [M label]
+  (.indexOf (col-names M) label))
+
+(defn get-ele [M pos]
+  (nth M pos))
+
+(defn get-cell [M [i j]]
+  (nth M (get-pos M [i j])))
+
+(defn csv-slurp [file-path]
+  (let [file (map #(clojure.string/split % #",")
+                  (clojure.string/split-lines (slurp file-path)))]
+    (drop-nth-col (with-meta (vec (apply concat (rest file)))
+                             {:row_names (vec (map #(keyword (first %)) (rest file)))
+                              :col_names (vec (map keyword (first file)))
+                              :row_cnt (count row-names)
+                              :col_cnt (count col-names)})
+                  0)))
+
+;if i = keyword, recall function, replace keyword with integer
