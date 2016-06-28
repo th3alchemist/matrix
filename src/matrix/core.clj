@@ -355,7 +355,24 @@
 (defn get-cell [M [i j]]
   (nth M (get-pos M [i j])))
 
+(defn csv-str [M]
+  "Accepts a matrix and create a csv string of it."
+  (apply str
+    (apply concat
+           (interpose "," (cons :row_names ((meta M) :col_names))) ;append columns as first row of csv
+           "\n" ;line break aft ther column names
+           (interpose "\n" ;put a line break after each row
+                      (map #(interpose "," %) ; interpose commas for csv format
+                           (map #(apply cons %) (partition 2 (interleave ((meta M) :row_names) ;append the row name to the beginning or each row
+                                                                         (all-rows M)))))))))
+
+(defn csv-spit [file-path M]
+  "Accepts a file path and a matrix,
+  and writes the matrix to the file in csv format."
+  (spit file-path (csv-str M)))
+
 (defn csv-slurp [file-path]
+  "Accepts a csv file as a file path (string) and creates a matrix"
   (let [file (map #(clojure.string/split % #",")
                   (clojure.string/split-lines (slurp file-path)))]
     (drop-nth-col (with-meta (vec (apply concat (rest file)))
@@ -364,5 +381,3 @@
                               :row_cnt (count row-names)
                               :col_cnt (count col-names)})
                   0)))
-
-;if i = keyword, recall function, replace keyword with integer
