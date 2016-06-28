@@ -359,11 +359,11 @@
   "Accepts a matrix and create a csv string of it."
   (apply str
     (apply concat
-           (interpose "," (cons :row_names ((meta M) :col_names))) ;append columns as first row of csv
+           (interpose "," (cons :row_names (map name ((meta M) :col_names)))) ;append columns as first row of csv
            "\n" ;line break aft ther column names
            (interpose "\n" ;put a line break after each row
                       (map #(interpose "," %) ; interpose commas for csv format
-                           (map #(apply cons %) (partition 2 (interleave ((meta M) :row_names) ;append the row name to the beginning or each row
+                           (map #(apply cons %) (partition 2 (interleave (map name ((meta M) :row_names)) ;append the row name to the beginning or each row
                                                                          (all-rows M)))))))))
 
 (defn csv-spit [file-path M]
@@ -374,10 +374,20 @@
 (defn csv-slurp [file-path]
   "Accepts a csv file as a file path (string) and creates a matrix"
   (let [file (map #(clojure.string/split % #",")
-                  (clojure.string/split-lines (slurp file-path)))]
+                  (clojure.string/split-lines (slurp file-path)))
+        row-names (vec (map #(keyword (first %)) (rest file)))
+        col-names (vec (map keyword (first file)))]
     (drop-nth-col (with-meta (vec (apply concat (rest file)))
-                             {:row_names (vec (map #(keyword (first %)) (rest file)))
-                              :col_names (vec (map keyword (first file)))
+                             {:row_names row-names
+                              :col_names col-names
                               :row_cnt (count row-names)
                               :col_cnt (count col-names)})
                   0)))
+
+(defn numerizer [M]
+  "Accepts a matrix of strings and returns a matrix of numbers"
+  (with-meta (vec (map read-string M))
+             {:row_cnt (:row_cnt (meta M))
+              :col_cnt (:col_cnt (meta M))
+              :row_names (:row_names (meta M))
+              :col_names (:col_names (meta M))}))
