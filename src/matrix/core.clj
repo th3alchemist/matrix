@@ -340,9 +340,13 @@
   (:col_names (meta M)))
 
 (defn row-index [M label]
+  "Accepts a matrix and keyword and returns
+  the row number associated with that keyword"
   (.indexOf (row-names M) label))
 
 (defn col-index [M label]
+  "Accepts a matrix and keyword and returns
+  the column number associated with that keyword"
   (.indexOf (col-names M) label))
 
 (defn get-ele [M pos]
