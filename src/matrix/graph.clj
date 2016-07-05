@@ -15,10 +15,6 @@
   [G vertex]
   (nth (:col_names (meta G)) vertex))
 
-(defn get-distance [G src dest]
-  (mCore/get-cell G [(mCore/row-index G src)
-                     (mCore/col-index G dest)]))
-
 (defn get-children
   "returns a hash-map of nodes reachable from the passed node, and their weights"
   [G src]
@@ -36,14 +32,16 @@
     nil
     (key (first coll))))
 
-(defn dfs [coll]
+(defn dfs
   "depth-first serach function for a*"
+  [coll]
   (if (empty? coll)
     nil
     (key (last coll))))
 
-(defn pfs [coll]
+(defn pfs
   "priority-first serach function for a*, the vertex with the lowest weighted is given priority"
+  [coll]
   (if (empty? coll)
     nil
     (key (first (into (sorted-map-by (fn [key1 key2]
