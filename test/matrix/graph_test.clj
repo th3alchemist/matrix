@@ -34,7 +34,6 @@
                              nil nil nil nil nil nil nil] ;g
                              {:row_cnt 7, :col_cnt 7, :row_names [:a :b :c :d :e :f :g], :col_names [:a :b :c :d :e :f :g]}))
 
-
 (def random-graph (with-meta [nil nil nil 1   1   1   ;a
                               nil nil nil 1   nil nil ;b
                               nil nil nil nil nil 1   ;c
