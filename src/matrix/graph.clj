@@ -15,72 +15,11 @@
   [G vertex]
   (nth (:col_names (meta G)) vertex))
 
-(defn get-children
-  "returns a list of nodes reachable from the passed row"
-  [row]
-  (loop [i 0 lst []]
-    (if (>= i (:col_cnt (meta row)))
-      (remove nil? lst)
-      (recur (inc i) (conj lst (child-name row i))))))
-
-(defn get-children-vec
-  "returns a vector of nodes reachable from the passed row"
-  [row]
-  (vec (reverse (get-childrne row))))
-
 (defn get-distance [G src dest]
   (mCore/get-cell G [(mCore/row-index G src)
                      (mCore/col-index G dest)]))
 
-(defn dfs 
-  "returns a vector of vertices from the src to dest in breath-first serach order"
-  [G src & [dest]]
-  (loop [open [src] processed []] ;;use as stack
-    (println "open is " open)
-    (if (= (peek open) dest)
-      (conj processed dest)
-      (recur
-        (vec
-          (remove (conj (set processed)
-                       (peek open))
-                  (concat open
-                          (get-children-vec (mCore/row G (peek open))))))
-        (conj processed (peek open))))))
-
-(defn bfs
-  "returns a vector of vertices from the src to dest in depth-first serach order"
-  [G src & [dest]]
-  (loop [open (list src) processed []] ;;use as queue
-    (if (= (peek open) dest)
-      (conj processed dest)
-      (recur
-        (apply list
-               (remove (conj (set processed)
-                             (peek open))
-                       (concat open
-                               (get-children (mCore/row G (peek open))))))
-        (conj processed (peek open))))))
-
-;dijkstra - get children with ditances, then sort by values
-;(into (sorted-map-by (fn [key1 key2]
-;                       (compare (get {:a 19 :b 8 :c 5 :d 17} key2)
-;                                (get {:a 19 :b 8 :c 5 :d 17} key1))))
-;      {:a 19 :b 8 :c 5 :d 17})
-
-(defn a*
-  "returns a vector of vertices from the src to dest in function f serach order"
-  [G f src & [dest]]
-  (loop [open (get-kids G src) processed [src]]
-    (if (= (f open) dest)
-      (conj processed dest)
-      (recur
-        (apply dissoc
-               (merge open
-                      (get-kids G (f open)))
-               (conj processed (f open)))
-        (conj processed (f open))))))
-
-(defn get-kids
+(defn get-children
   "returns a hash-map of nodes reachable from the passed node, and their weights"
   [G src]
   (into {}
@@ -90,22 +29,41 @@
                          (:row_names (meta G))
                          (mCore/row G src))))))
 
-
-(defn prioritize-queue [coll]
-  "accepts map of node:dist"
-  (key (first (into (sorted-map-by (fn [key1 key2]
-                       (compare (get coll key1)
-                                (get coll key2))))
-      coll))))
-
-(b* bint bfs :a)
-
-(defn bfs [coll]
+(defn bfs
+  "breadth-first serach function for a*"
+  [coll]
   (if (empty? coll)
     nil
     (key (first coll))))
 
 (defn dfs [coll]
+  "depth-first serach function for a*"
   (if (empty? coll)
     nil
     (key (last coll))))
+
+(defn pfs [coll]
+  "priority-first serach function for a*, the vertex with the lowest weighted is given priority"
+  (if (empty? coll)
+    nil
+    (key (first (into (sorted-map-by (fn [key1 key2]
+                       (compare (get coll key1)
+                                (get coll key2))))
+      coll)))))
+
+;dijkstra - use pfs, but update values in graph
+
+(defn a*
+  "returns a vector of vertices from the src to dest in function f serach order"
+  [G f src & [dest]]
+  (loop [open (get-children G src) processed [src]]
+    (if (= (f open) dest)
+      (conj processed dest)
+      (recur
+        (apply dissoc
+               (merge open
+                      (get-children G (f open)))
+               (conj processed (f open)))
+        (conj processed (f open))))))
+
+;(a* weighted-graph dijkstra :a)
