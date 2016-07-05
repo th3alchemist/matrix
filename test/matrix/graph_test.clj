@@ -34,7 +34,7 @@
                              nil nil nil nil nil nil nil] ;g
                              {:row_cnt 7, :col_cnt 7, :row_names [:a :b :c :d :e :f :g], :col_names [:a :b :c :d :e :f :g]}))
 
-(def random-graph (with-meta [nil 9   6   nil nil nil ;a
+(def weighted-graph (with-meta [nil 9   6   nil nil nil ;a
                               9   nil nil 2   14  nil ;b
                               6   nil nil 11  nil 15  ;c
                               nil 2   11  nil 9   10  ;d
