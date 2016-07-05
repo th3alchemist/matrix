@@ -34,12 +34,12 @@
                              nil nil nil nil nil nil nil] ;g
                              {:row_cnt 7, :col_cnt 7, :row_names [:a :b :c :d :e :f :g], :col_names [:a :b :c :d :e :f :g]}))
 
-(def random-graph (with-meta [nil nil nil 1   1   1   ;a
-                              nil nil nil 1   nil nil ;b
-                              nil nil nil nil nil 1   ;c
-                              1   1   nil nil 1   nil ;d
-                              1   nil nil 1   nil nil ;e
-                              1   nil 1   nil nil nil];f
+(def random-graph (with-meta [nil 9   6   nil nil nil ;a
+                              9   nil nil 2   14  nil ;b
+                              6   nil nil 11  nil 15  ;c
+                              nil 2   11  nil 9   10  ;d
+                              nil 14  nil 9   nil 7   ;e
+                              nil nil 15  10  7   nil];f
                              {:row_cnt 6
                               :col_cnt 6
                               :row_names [:a :b :c :d :e :f]
