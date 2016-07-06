@@ -4,7 +4,7 @@
   "takes a sequence coll and index pos.
   Returns the sequence with the element at position pos removed"
   [coll pos]
-  (vec (concat (subvec coll 0 pos) (subvec coll (inc pos)))))
+  (vec (clojure.core/concat (subvec coll 0 pos) (subvec coll (inc pos)))))
 
 (defn matrix
   "Creates an empty matrix. When called with one parameter, it creats an nXn matrix. When called with two parameters, it creates an iXj matrix. When called with three paraters, it creates an iXj matrix initalized to defaultVal."
@@ -92,16 +92,16 @@
   ([M i j v]
     (matrix-assoc M (get-pos M [i j]) v)))
 
-(defn matrix-concat
+(defn concat
   "Accepts two matrcies M and N, and returns matrix N appended to the bottom of matrix M"
   [M N]
-  (with-meta (vec (concat M N))
+  (with-meta (vec (clojure.core/concat M N))
              {:row_cnt (+ (:row_cnt (meta M)) (:row_cnt (meta N)))
               :col_cnt (:col_cnt (meta M))
-              :row_names (vec (concat (:row_names (meta M)) (:row_names (meta N))))
+              :row_names (vec (clojure.core/concat (:row_names (meta M)) (:row_names (meta N))))
               :col_names (:col_names (meta M))}))
 
-(defn matrix-conj
+(defn conj
   "Accepts two matrcies M and N,
   and returns matrix N appended
   to the left of matrix M"
@@ -109,11 +109,11 @@
   (loop [out [] row 0]
     (if (= row (:row_cnt (meta M)))
       out
-      (recur (with-meta (vec (concat out (nth-row M row) (nth-row N row)))
+      (recur (with-meta (vec (clojure.core/concat out (nth-row M row) (nth-row N row)))
                         {:row_cnt (:row_cnt (meta M))
                          :col_cnt (+ (:col_cnt (meta M)) (:col_cnt (meta N)))
                          :row_names (:row_names (meta M))
-                         :col_names (vec (concat (:col_names (meta M)) (:col_names (meta N))))})
+                         :col_names (vec (clojure.core/concat (:col_names (meta M)) (:col_names (meta N))))})
               (inc row)))))
 
 (defn get-row
@@ -218,7 +218,7 @@
       out
       (recur
         (inc i)
-        (conj out (nth-row M i))))))
+        (clojure.core/conj out (nth-row M i))))))
 
 (defn all-cols
   "Accepts a matrix M and returns a
@@ -230,7 +230,7 @@
       out
       (recur
         (inc i)
-        (conj out (nth-col M i))))))
+        (clojure.core/conj out (nth-col M i))))))
 
 (defn row
   "Accepts a matrix M and row name label
@@ -281,7 +281,7 @@
   "Accepts a matrix M and returns M reflected across its y-axis.
   (Think 'mirror reflection')"
   [M]
-  (with-meta (vec (apply concat (map reverse (partition (:col_cnt (meta M)) M))))
+  (with-meta (vec (apply clojure.core/concat (map reverse (partition (:col_cnt (meta M)) M))))
              {:row_cnt (:row_cnt (meta M))
               :col_cnt (:col_cnt (meta M))
               :row_names (:row_names (meta M))
@@ -298,7 +298,7 @@
                             :row_names (:row_names (meta M))
                             :col_names (:col_names (meta M))})
       (recur (dec i)
-             (concat out (nth-row M i))))))
+             (clojure.core/concat out (nth-row M i))))))
 
 (defn diagonal
   "Accepts a matrix M and returns a matrix of values
@@ -337,7 +337,7 @@
   "Accepts a matrix M and row index i.
   Returns a the original matrix with the ith row removed"
   [M i]
-  (with-meta (vec (concat (subvec M 0 (* i (:col_cnt (meta M))))
+  (with-meta (vec (clojure.core/concat (subvec M 0 (* i (:col_cnt (meta M))))
                           (subvec M (* (inc i) (:col_cnt (meta M))))))
              {:row_cnt (dec (:row_cnt (meta M)))
               :col_cnt (:col_cnt (meta M))
@@ -404,7 +404,7 @@
   "Accepts a matrix and create a csv string of it."
   [M]
   (apply 2 (replace {nil "nil"}
-    (apply concat
+    (apply clojure.core/concat
            (interpose "," (cons "id" (map name ((meta M) :row_names)))) ;append columns as first row of csv
            "\n" ;line break aft ther column names
            (interpose "\n" ;put a line break after each row
@@ -425,7 +425,7 @@
                   (clojure.string/split-lines (slurp file-path)))
         row-names (vec (map #(keyword (clojure.string/replace (first %) #" " "_")) (rest  file)))
         col-names (vec (map #(keyword (clojure.string/replace %         #" " "_")) (first file)))]
-    (drop-nth-col (with-meta (vec (apply concat (rest file)))
+    (drop-nth-col (with-meta (vec (apply clojure.core/concat (rest file)))
                              {:row_names row-names
                               :col_names col-names
                               :row_cnt (count row-names)
