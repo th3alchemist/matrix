@@ -54,7 +54,7 @@
 (defn a*
   "returns a vector of vertices from the src to dest in function f serach order"
   [G f src & [dest]]
-  (loop [open (get-children G src) processed [src]]
+  (loop [open (get-children G src) processed []]
     (if (= (f open) dest)
       (conj processed dest)
       (recur
