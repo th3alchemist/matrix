@@ -22,7 +22,41 @@
                         :row_names (vec (map #(keyword (clojure.core/str (char %))) (range 65 (+ 65 n))))
                         :col_names (vec (map #(keyword (clojure.core/str (char %))) (range 97 (+ 97 n))))})))
 
-(declare matrix-assoc)
+
+(defn assoc
+  "assoc function wrapper. Accepts the same args as assoc, M(matrix) k(key) and v(value) i(row index), j(column index) but returns a matrix"
+  ([M k v]
+    (with-meta (clojure.core/assoc M k v)
+             {:row_cnt (:row_cnt (meta M))
+              :col_cnt (:col_cnt (meta M))
+              :row_names (:row_names (meta M))
+              :col_names (:col_names (meta M))}))
+  ([M i j v]
+    (assoc M (get-pos M [i j]) v)))
+
+(defn concat
+  "Accepts two matrcies M and N, and returns matrix N appended to the bottom of matrix M"
+  [M N]
+  (with-meta (vec (clojure.core/concat M N))
+             {:row_cnt (+ (:row_cnt (meta M)) (:row_cnt (meta N)))
+              :col_cnt (:col_cnt (meta M))
+              :row_names (vec (clojure.core/concat (:row_names (meta M)) (:row_names (meta N))))
+              :col_names (:col_names (meta M))}))
+
+(defn conj
+  "Accepts two matrcies M and N,
+  and returns matrix N appended
+  to the left of matrix M"
+  [M N]
+  (loop [out [] row 0]
+    (if (= row (:row_cnt (meta M)))
+      out
+      (recur (with-meta (vec (clojure.core/concat out (nth-row M row) (nth-row N row)))
+                        {:row_cnt (:row_cnt (meta M))
+                         :col_cnt (+ (:col_cnt (meta M)) (:col_cnt (meta N)))
+                         :row_names (:row_names (meta M))
+                         :col_names (vec (clojure.core/concat (:col_names (meta M)) (:col_names (meta N))))})
+              (inc row)))))
 
 (declare get-pos)
 
@@ -40,7 +74,7 @@
       I
       (recur
         (inc row)
-        (matrix-assoc I
+        (assoc I
                       (* row (+ n 1))
                       1)))))
 
@@ -80,41 +114,6 @@
           (:row_cnt (meta N)))
        (= (:col_cnt (meta M))
           (:col_cnt (meta N)))))
-
-(defn matrix-assoc
-  "assoc function wrapper. Accepts the same args as assoc, M(matrix) k(key) and v(value) i(row index), j(column index) but returns a matrix"
-  ([M k v]
-    (with-meta (assoc M k v)
-             {:row_cnt (:row_cnt (meta M))
-              :col_cnt (:col_cnt (meta M))
-              :row_names (:row_names (meta M))
-              :col_names (:col_names (meta M))}))
-  ([M i j v]
-    (matrix-assoc M (get-pos M [i j]) v)))
-
-(defn concat
-  "Accepts two matrcies M and N, and returns matrix N appended to the bottom of matrix M"
-  [M N]
-  (with-meta (vec (clojure.core/concat M N))
-             {:row_cnt (+ (:row_cnt (meta M)) (:row_cnt (meta N)))
-              :col_cnt (:col_cnt (meta M))
-              :row_names (vec (clojure.core/concat (:row_names (meta M)) (:row_names (meta N))))
-              :col_names (:col_names (meta M))}))
-
-(defn conj
-  "Accepts two matrcies M and N,
-  and returns matrix N appended
-  to the left of matrix M"
-  [M N]
-  (loop [out [] row 0]
-    (if (= row (:row_cnt (meta M)))
-      out
-      (recur (with-meta (vec (clojure.core/concat out (nth-row M row) (nth-row N row)))
-                        {:row_cnt (:row_cnt (meta M))
-                         :col_cnt (+ (:col_cnt (meta M)) (:col_cnt (meta N)))
-                         :row_names (:row_names (meta M))
-                         :col_names (vec (clojure.core/concat (:col_names (meta M)) (:col_names (meta N))))})
-              (inc row)))))
 
 (defn get-row
   "Accepts a matrix M and index pos
@@ -329,7 +328,7 @@
                       :col_names (:row_names (meta M))})
       (recur 
         (inc i)
-        (matrix-assoc out
+        (assoc out
                       (get-pos out [(get-col M i) (get-row M i)])
                       (get M i))))))
 
