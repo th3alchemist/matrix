@@ -58,6 +58,13 @@
                          :col_names (vec (clojure.core/concat (:col_names (meta M)) (:col_names (meta N))))})
               (inc row)))))
 
+(defn replace [M]
+  (with-meta (clojure.core/replace smap M)
+             {:row_cnt (:row_cnt (meta M))
+              :col_cnt (:col_cnt (meta M))
+              :row_names (:row_names (meta M))
+              :col_names (:col_names (meta M))}))
+
 (declare get-pos)
 
 (declare nth-row)
@@ -402,7 +409,7 @@
 (defn csv-str
   "Accepts a matrix and create a csv string of it."
   [M]
-  (apply clojure.core/str (replace {nil "nil"}
+  (apply clojure.core/str (clojure.core/replace {nil "nil"}
     (apply clojure.core/concat
            (interpose "," (cons "id" (map name ((meta M) :row_names)))) ;append columns as first row of csv
            "\n" ;line break aft ther column names
@@ -449,7 +456,3 @@
               :col_cnt (:col_cnt (meta M))
               :row_names (:row_names (meta M))
               :col_names (:col_names (meta M))}))
-
-
-(defn matrix-replace [M]
-  )
