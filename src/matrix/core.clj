@@ -403,10 +403,9 @@
 (defn csv-str
   "Accepts a matrix and create a csv string of it."
   [M]
-  (apply str
-         (replace {nil (char 1)}
+  (apply str (replace {nil "nil"}
     (apply concat
-           (interpose "," (cons :row_names (map name ((meta M) :col_names)))) ;append columns as first row of csv
+           (interpose "," (cons :row_names (map name ((meta M) :row_names)))) ;append columns as first row of csv
            "\n" ;line break aft ther column names
            (interpose "\n" ;put a line break after each row
                       (map #(interpose "," %) ; interpose commas for csv format
@@ -426,7 +425,7 @@
                   (clojure.string/split-lines (slurp file-path)))
         row-names (vec (map #(keyword (first %)) (rest file)))
         col-names (vec (map keyword (first file)))]
-    (drop-nth-col (with-meta (vec (replace {(str (char 1)) nil} (apply concat (rest file))))
+    (drop-nth-col (with-meta (vec (apply concat (rest file)))
                              {:row_names row-names
                               :col_names col-names
                               :row_cnt (count row-names)
@@ -450,3 +449,7 @@
               :col_cnt (:col_cnt (meta M))
               :row_names (:row_names (meta M))
               :col_names (:col_names (meta M))}))
+
+
+(defn matrix-replace [M]
+  )

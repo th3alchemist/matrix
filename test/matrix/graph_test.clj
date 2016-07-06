@@ -4,22 +4,22 @@
 (alias 'mCore 'matrix.core)
 
 (def hyper-cube (with-meta
-  [0   1   1   nil 1   nil nil nil 2   nil nil nil nil nil nil nil ;a
-   1   0   nil 1   nil 1   nil nil nil 2   nil nil nil nil nil nil ;b
-   1   nil 0   1   nil nil 1   nil nil nil 2   nil nil nil nil nil ;c
-   nil 1   1   0   nil nil nil 1   nil nil nil 2   nil nil nil nil ;d
-   1   nil nil nil 0   1   1   nil nil nil nil nil 2   nil nil nil ;e
-   nil 1   nil nil 1   0   nil 1   nil nil nil nil nil 2   nil nil ;f
-   nil nil 1   nil 1   nil 0   1   nil nil nil nil nil nil 2   nil ;g
-   nil nil nil 1   nil 1   1   0   nil nil nil nil nil nil nil 2   ;h
-   2   nil nil nil nil nil nil nil 0   1   1   nil 1   nil nil nil ;a*
-   nil 2   nil nil nil nil nil nil 1   0   nil 1   nil 1   nil nil ;b*
-   nil nil 2   nil nil nil nil nil 1   nil 0   1   nil nil 1   nil ;c*
-   nil nil nil 2   nil nil nil nil nil 1   1   0   nil nil nil 1   ;d*
-   nil nil nil nil 2   nil nil nil 1   nil nil nil 0   1   1   nil ;e*
-   nil nil nil nil nil 2   nil nil nil 1   nil nil 1   0   nil 1   ;f*
-   nil nil nil nil nil nil 2   nil nil nil 1   nil 1   nil 0   1   ;g*
-   nil nil nil nil nil nil nil 2   nil nil nil 1   nil 1   1   0  ];h*
+  [nil 2   2   nil 2   nil nil nil 3   nil nil nil nil nil nil nil ;a
+   2   nil nil 2   nil 2   nil nil nil 3   nil nil nil nil nil nil ;b
+   2   nil nil 2   nil nil 2   nil nil nil 3   nil nil nil nil nil ;c
+   nil 2   2   nil nil nil nil 2   nil nil nil 3   nil nil nil nil ;d
+   2   nil nil nil nil 2   2   nil nil nil nil nil 3   nil nil nil ;e
+   nil 2   nil nil 2   nil nil 2   nil nil nil nil nil 3   nil nil ;f
+   nil nil 2   nil 2   nil nil 2   nil nil nil nil nil nil 3   nil ;g
+   nil nil nil 2   nil 2   2   nil nil nil nil nil nil nil nil 3   ;h
+   3   nil nil nil nil nil nil nil nil 1   1   nil 1   nil nil nil ;a*
+   nil 3   nil nil nil nil nil nil 1   nil nil 1   nil 1   nil nil ;b*
+   nil nil 3   nil nil nil nil nil 1   nil nil 1   nil nil 1   nil ;c*
+   nil nil nil 3   nil nil nil nil nil 1   1   nil nil nil nil 1   ;d*
+   nil nil nil nil 3   nil nil nil 1   nil nil nil nil 1   1   nil ;e*
+   nil nil nil nil nil 3   nil nil nil 1   nil nil 1   nil nil 1   ;f*
+   nil nil nil nil nil nil 3   nil nil nil 1   nil 1   nil nil 1   ;g*
+   nil nil nil nil nil nil nil 3   nil nil nil 1   nil 1   1   nil];h*
   {:row_cnt 16
    :col_cnt 16
    :row_names [:a :b :c :d :e :f :g :h :a* :b* :c* :d* :e* :f* :g* :h*]

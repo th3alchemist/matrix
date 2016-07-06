@@ -49,7 +49,7 @@
                                 (get coll key2))))
       coll)))))
 
-;dijkstra - use pfs, but update values in graph
+;dijkstra - use pfs, but start with a processed list of all inf, update values in processed and choose the lowest, added a closed vector
 
 (defn a*
   "returns a vector of vertices from the src to dest in function f serach order"
