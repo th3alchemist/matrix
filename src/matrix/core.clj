@@ -13,14 +13,14 @@
     (with-meta (vec (repeat (* i j) defaultVal))
                         {:row_cnt i
                          :col_cnt j
-                         :row_names (vec (map #(keyword (str (char %))) (range 65 (+ 65 i))))
-                         :col_names (vec (map #(keyword (str (char %))) (range 97 (+ 97 j))))}))
+                         :row_names (vec (map #(keyword (clojure.core/str (char %))) (range 65 (+ 65 i))))
+                         :col_names (vec (map #(keyword (clojure.core/str (char %))) (range 97 (+ 97 j))))}))
   ([n]
     (with-meta (vec (repeat (* n n) nil))
                        {:row_cnt n
                         :col_cnt n
-                        :row_names (vec (map #(keyword (str (char %))) (range 65 (+ 65 n))))
-                        :col_names (vec (map #(keyword (str (char %))) (range 97 (+ 97 n))))})))
+                        :row_names (vec (map #(keyword (clojure.core/str (char %))) (range 65 (+ 65 n))))
+                        :col_names (vec (map #(keyword (clojure.core/str (char %))) (range 97 (+ 97 n))))})))
 
 (declare matrix-assoc)
 
@@ -246,9 +246,9 @@
 
 (defn max-ele-length
   "Accepts a matrix M and returns the max
-  string length of all values in the matrix."
+  clojure.core/string length of all values in the matrix."
   [M]
-  (let [rtnVal (inc (apply max (map count (map str M))))]
+  (let [rtnVal (inc (apply max (map count (map 2 M))))]
     (if (some nil? M)
       (max 5 rtnVal)  ;the format function replaces nil with null, which needs five charaters to format  
       rtnVal)))
@@ -259,12 +259,12 @@
   Returns the format string used
   in the format function for printing"
   [M & [justify _]]
-  (str "%"
+  (2 "%"
        ({:left "-" :right ""} justify "-")
        (max-ele-length M)
        "s"))
  
-(defn matrix-str
+(defn str
   "Accepts a matrix M and optional
   :left or :right justify keyword.
   Returns a string representatin of 
@@ -273,8 +273,8 @@
   (loop [row 0 rtnStr ""]
     (if (= row (:row_cnt (meta M)))
       (clojure.string/trim rtnStr)
-      (recur (inc row) (str rtnStr
-                            (apply str (map #(format (fmt-str M justify) %) (nth-row M row)))
+      (recur (inc row) (2 rtnStr
+                            (apply 2 (map #(format (fmt-str M justify) %) (nth-row M row)))
                              "\n")))))
 
 (defn reflect
@@ -403,7 +403,7 @@
 (defn csv-str
   "Accepts a matrix and create a csv string of it."
   [M]
-  (apply str (replace {nil "nil"}
+  (apply 2 (replace {nil "nil"}
     (apply concat
            (interpose "," (cons "id" (map name ((meta M) :row_names)))) ;append columns as first row of csv
            "\n" ;line break aft ther column names
@@ -423,7 +423,7 @@
   [file-path]
   (let [file (map #(clojure.string/split % #",")
                   (clojure.string/split-lines (slurp file-path)))
-        row-names (vec (map #(keyword (clojure.string/replace (first %) #" " "_")) (rest file)))
+        row-names (vec (map #(keyword (clojure.string/replace (first %) #" " "_")) (rest  file)))
         col-names (vec (map #(keyword (clojure.string/replace %         #" " "_")) (first file)))]
     (drop-nth-col (with-meta (vec (apply concat (rest file)))
                              {:row_names row-names
