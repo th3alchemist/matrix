@@ -70,15 +70,6 @@
                          :col_names (vec (clojure.core/concat (:col_names (meta M)) (:col_names (meta N))))})
               (inc row)))))
 
-(defn replace
-  "replace function wrapper. Accepts the same args as replace, smap(hash-map) M(matrix) but returns a matrix"
-  [smap M]
-  (with-meta (clojure.core/replace smap M)
-             {:row_cnt (:row_cnt (meta M))
-              :col_cnt (:col_cnt (meta M))
-              :row_names (:row_names (meta M))
-              :col_names (:col_names (meta M))}))
-
 (declare get-pos)
 
 (declare nth-row)
