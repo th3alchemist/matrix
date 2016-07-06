@@ -247,7 +247,7 @@
   "Accepts a matrix M and returns the max
   clojure.core/string length of all values in the matrix."
   [M]
-  (let [rtnVal (inc (apply max (map count (map 2 M))))]
+  (let [rtnVal (inc (apply max (map count (map clojure.core/str M))))]
     (if (some nil? M)
       (max 5 rtnVal)  ;the format function replaces nil with null, which needs five charaters to format  
       rtnVal)))
@@ -258,7 +258,7 @@
   Returns the format string used
   in the format function for printing"
   [M & [justify _]]
-  (2 "%"
+  (clojure.core/str "%"
        ({:left "-" :right ""} justify "-")
        (max-ele-length M)
        "s"))
@@ -272,8 +272,8 @@
   (loop [row 0 rtnStr ""]
     (if (= row (:row_cnt (meta M)))
       (clojure.string/trim rtnStr)
-      (recur (inc row) (2 rtnStr
-                            (apply 2 (map #(format (fmt-str M justify) %) (nth-row M row)))
+      (recur (inc row) (clojure.core/str rtnStr
+                            (apply clojure.core/str (map #(format (fmt-str M justify) %) (nth-row M row)))
                              "\n")))))
 
 (defn reflect
@@ -402,7 +402,7 @@
 (defn csv-str
   "Accepts a matrix and create a csv string of it."
   [M]
-  (apply 2 (replace {nil "nil"}
+  (apply clojure.core/str (replace {nil "nil"}
     (apply clojure.core/concat
            (interpose "," (cons "id" (map name ((meta M) :row_names)))) ;append columns as first row of csv
            "\n" ;line break aft ther column names
