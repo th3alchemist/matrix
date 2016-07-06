@@ -22,6 +22,18 @@
                         :row_names (vec (map #(keyword (clojure.core/str (char %))) (range 65 (+ 65 n))))
                         :col_names (vec (map #(keyword (clojure.core/str (char %))) (range 97 (+ 97 n))))})))
 
+(defn str
+  "Accepts a matrix M and optional
+  :left or :right justify keyword.
+  Returns a string representatin of 
+  the matrix"
+  [M & [justify _]]
+  (loop [row 0 rtnStr ""]
+    (if (= row (:row_cnt (meta M)))
+      (clojure.string/trim rtnStr)
+      (recur (inc row) (clojure.core/str rtnStr
+                            (apply clojure.core/str (map #(format (fmt-str M justify) %) (nth-row M row)))
+                             "\n")))))
 
 (defn assoc
   "assoc function wrapper. Accepts the same args as assoc, M(matrix) k(key) and v(value) i(row index), j(column index) but returns a matrix"
@@ -58,7 +70,9 @@
                          :col_names (vec (clojure.core/concat (:col_names (meta M)) (:col_names (meta N))))})
               (inc row)))))
 
-(defn replace [M]
+(defn replace
+  "replace function wrapper. Accepts the same args as replace, smap(hash-map) M(matrix) but returns a matrix"
+  [smap M]
   (with-meta (clojure.core/replace smap M)
              {:row_cnt (:row_cnt (meta M))
               :col_cnt (:col_cnt (meta M))
@@ -269,19 +283,6 @@
        ({:left "-" :right ""} justify "-")
        (max-ele-length M)
        "s"))
- 
-(defn str
-  "Accepts a matrix M and optional
-  :left or :right justify keyword.
-  Returns a string representatin of 
-  the matrix"
-  [M & [justify _]]
-  (loop [row 0 rtnStr ""]
-    (if (= row (:row_cnt (meta M)))
-      (clojure.string/trim rtnStr)
-      (recur (inc row) (clojure.core/str rtnStr
-                            (apply clojure.core/str (map #(format (fmt-str M justify) %) (nth-row M row)))
-                             "\n")))))
 
 (defn reflect
   "Accepts a matrix M and returns M reflected across its y-axis.
@@ -437,7 +438,6 @@
                               :row_cnt (count row-names)
                               :col_cnt (count col-names)})
                   0)))
-
 
 (defn numerize
   "Accepts a matrix of strings and returns a matrix of numbers"
