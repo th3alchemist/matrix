@@ -1,26 +1,36 @@
 (ns matrix.core)
 
+(declare get-pos)
+
+(declare nth-row)
+
+(declare nth-col)
+
 (defn vec-remove
   "takes a sequence coll and index pos.
   Returns the sequence with the element at position pos removed"
   [coll pos]
   (vec (clojure.core/concat (subvec coll 0 pos) (subvec coll (inc pos)))))
 
-(defn matrix
-  "Creates an empty matrix. When called with one parameter, it creats an nXn matrix. When called with two parameters, it creates an iXj matrix. When called with three paraters, it creates an iXj matrix initalized to defaultVal."
-  ([i j & [defaultVal]]
+(defn max-ele-length
+  "Accepts a matrix M and returns the max
+  clojure.core/string length of all values in the matrix."
+  [M]
+  (let [rtnVal (inc (apply max (clojure.core/map count (clojure.core/map clojure.core/str M))))]
+    (if (some nil? M)
+      (max 5 rtnVal)  ;the format function replaces nil with null, which needs five charaters to format  
+      rtnVal)))
 
-    (with-meta (vec (repeat (* i j) defaultVal))
-                        {:row_cnt i
-                         :col_cnt j
-                         :row_names (vec (map #(keyword (clojure.core/str (char %))) (range 65 (+ 65 i))))
-                         :col_names (vec (map #(keyword (clojure.core/str (char %))) (range 97 (+ 97 j))))}))
-  ([n]
-    (with-meta (vec (repeat (* n n) nil))
-                       {:row_cnt n
-                        :col_cnt n
-                        :row_names (vec (map #(keyword (clojure.core/str (char %))) (range 65 (+ 65 n))))
-                        :col_names (vec (map #(keyword (clojure.core/str (char %))) (range 97 (+ 97 n))))})))
+(defn fmt-str
+  "Accepts a matrix M and optional
+  :left or :right justify keyword.
+  Returns the format string used
+  in the format function for printing"
+  [M & [justify _]]
+  (clojure.core/str "%"
+       ({:left "-" :right ""} justify "-")
+       (max-ele-length M)
+       "s"))
 
 (defn str
   "Accepts a matrix M and optional
@@ -32,7 +42,7 @@
     (if (= row (:row_cnt (meta M)))
       (clojure.string/trim rtnStr)
       (recur (inc row) (clojure.core/str rtnStr
-                            (apply clojure.core/str (map #(format (fmt-str M justify) %) (nth-row M row)))
+                            (apply clojure.core/str (clojure.core/map #(format (fmt-str M justify) %) (nth-row M row)))
                              "\n")))))
 
 (defn assoc
@@ -70,11 +80,28 @@
                          :col_names (vec (clojure.core/concat (:col_names (meta M)) (:col_names (meta N))))})
               (inc row)))))
 
-(declare get-pos)
+(defn map [f M]
+    (with-meta (vec (clojure.core/map f M))
+             {:row_cnt (:row_cnt (meta M))
+              :col_cnt (:col_cnt (meta M))
+              :row_names (:row_names (meta M))
+              :col_names (:col_names (meta M))}))
 
-(declare nth-row)
+(defn matrix
+  "Creates an empty matrix. When called with one parameter, it creats an nXn matrix. When called with two parameters, it creates an iXj matrix. When called with three paraters, it creates an iXj matrix initalized to defaultVal."
+  ([i j & [defaultVal]]
 
-(declare nth-col)
+    (with-meta (vec (repeat (* i j) defaultVal))
+                        {:row_cnt i
+                         :col_cnt j
+                         :row_names (vec (clojure.core/map #(keyword (clojure.core/str (char %))) (range 65 (+ 65 i))))
+                         :col_names (vec (clojure.core/map #(keyword (clojure.core/str (char %))) (range 97 (+ 97 j))))}))
+  ([n]
+    (with-meta (vec (repeat (* n n) nil))
+                       {:row_cnt n
+                        :col_cnt n
+                        :row_names (vec (clojure.core/map #(keyword (clojure.core/str (char %))) (range 65 (+ 65 n))))
+                        :col_names (vec (clojure.core/map #(keyword (clojure.core/str (char %))) (range 97 (+ 97 n))))})))
 
 (defn identity-matrix
   "Takes an integer n and returns a square
@@ -255,31 +282,11 @@
   [M label]
   (nth-col M (.indexOf (:col_names (meta M)) label)))
 
-(defn max-ele-length
-  "Accepts a matrix M and returns the max
-  clojure.core/string length of all values in the matrix."
-  [M]
-  (let [rtnVal (inc (apply max (map count (map clojure.core/str M))))]
-    (if (some nil? M)
-      (max 5 rtnVal)  ;the format function replaces nil with null, which needs five charaters to format  
-      rtnVal)))
- 
-(defn fmt-str
-  "Accepts a matrix M and optional
-  :left or :right justify keyword.
-  Returns the format string used
-  in the format function for printing"
-  [M & [justify _]]
-  (clojure.core/str "%"
-       ({:left "-" :right ""} justify "-")
-       (max-ele-length M)
-       "s"))
-
 (defn reflect
   "Accepts a matrix M and returns M reflected across its y-axis.
   (Think 'mirror reflection')"
   [M]
-  (with-meta (vec (apply clojure.core/concat (map reverse (partition (:col_cnt (meta M)) M))))
+  (with-meta (vec (apply clojure.core/concat (clojure.core/map reverse (partition (:col_cnt (meta M)) M))))
              {:row_cnt (:row_cnt (meta M))
               :col_cnt (:col_cnt (meta M))
               :row_names (:row_names (meta M))
@@ -403,11 +410,11 @@
   [M]
   (apply clojure.core/str (clojure.core/replace {nil "nil"}
     (apply clojure.core/concat
-           (interpose "," (cons "id" (map name ((meta M) :row_names)))) ;append columns as first row of csv
+           (interpose "," (cons "id" (clojure.core/map name ((meta M) :row_names)))) ;append columns as first row of csv
            "\n" ;line break aft ther column names
            (interpose "\n" ;put a line break after each row
-                      (map #(interpose "," %) ; interpose commas for csv format
-                           (map #(apply cons %) (partition 2 (interleave (map name ((meta M) :row_names)) ;append the row name to the beginning or each row
+                      (clojure.core/map #(interpose "," %) ; interpose commas for csv format
+                           (clojure.core/map #(apply cons %) (partition 2 (interleave (clojure.core/map name ((meta M) :row_names)) ;append the row name to the beginning or each row
                                                                          (all-rows M))))))))))
 
 (defn csv-spit
@@ -419,10 +426,10 @@
 (defn csv-slurp
   "Accepts a csv file as a file path (string) and creates a matrix"
   [file-path]
-  (let [file (map #(clojure.string/split % #",")
+  (let [file (clojure.core/map #(clojure.string/split % #",")
                   (clojure.string/split-lines (slurp file-path)))
-        row-names (vec (map #(keyword (clojure.string/replace (first %) #" " "_")) (rest  file)))
-        col-names (vec (map #(keyword (clojure.string/replace %         #" " "_")) (first file)))]
+        row-names (vec (clojure.core/map #(keyword (clojure.string/replace (first %) #" " "_")) (rest  file)))
+        col-names (vec (clojure.core/map #(keyword (clojure.string/replace %         #" " "_")) (first file)))]
     (drop-nth-col (with-meta (vec (apply clojure.core/concat (rest file)))
                              {:row_names row-names
                               :col_names col-names
@@ -433,17 +440,9 @@
 (defn numerize
   "Accepts a matrix of strings and returns a matrix of numbers"
   [M]
-  (with-meta (vec (map read-string M))
-             {:row_cnt (:row_cnt (meta M))
-              :col_cnt (:col_cnt (meta M))
-              :row_names (:row_names (meta M))
-              :col_names (:col_names (meta M))}))
+  (map read-string M))
 
 (defn keywordify
   "Accepts a matrix of strings and returns a matrix of keywords"
   [M]
-  (with-meta (vec (map keyword M))
-             {:row_cnt (:row_cnt (meta M))
-              :col_cnt (:col_cnt (meta M))
-              :row_names (:row_names (meta M))
-              :col_names (:col_names (meta M))}))
+  (map keyword M))
