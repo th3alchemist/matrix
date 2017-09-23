@@ -1,6 +1,6 @@
-(ns matrix.math)
-(require 'matrix.core)
-(alias 'mCore 'matrix.core)
+(ns aIo.matrix.math)
+(require 'aIo.matrix.core)
+(alias 'mCore 'aIo.matrix.core)
 
 (defn scalar-add
   "adds scalar to every element of matrix M"

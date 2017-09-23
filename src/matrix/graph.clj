@@ -1,7 +1,7 @@
-(ns matrix.graph)
+(ns aIo.matrix.graph)
 
-(require 'matrix.core)
-(alias 'mCore 'matrix.core)
+(require 'aIo.matrix.core)
+(alias 'mCore 'aIo.matrix.core)
 
 (defn child-name 
   "accepts a matrix and index. Returns the column name assigned to the index pos"

@@ -1,4 +1,4 @@
-(ns matrix.core)
+(ns aIo.matrix.core)
 
 (defn vec-remove
   "takes a sequence coll and index pos.

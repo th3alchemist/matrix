@@ -1,8 +1,8 @@
-(ns matrix.graphics)
+(ns aIo.matrix.graphics)
 
-(require 'matrix.core 'matrix.math)
-(alias 'mCore 'matrix.core)
-(alias 'mMath 'matrix.math)
+(require 'aIo.matrix.core 'aIo.matrix.math)
+(alias 'mCore 'aIo.matrix.core)
+(alias 'mMath 'aIo.matrix.math)
 
 (defn sheer-matrix [x]
   nil)
